@@ -1,0 +1,119 @@
+[
+    {
+        "FileName": "新建文件夹",
+		"VirName":" 3F7F9CE5A09F070C89438A05617FE9C4",
+        "CreateTime": "2016-11-22 00:37:39",
+        "FileSize": "",
+        "FileExt": "",
+        "ParentPath": "/",
+        "FileType": "dir"
+    },
+    {
+    	"FileName": "Muyun.doc",
+		"VirName":" 3F7F9CE5A09F070C89438A01567FE9C4",
+    	"CreateTime": "2016-11-08 00:00:00",
+        "FileSize": "1",
+        "FileExt": "doc",
+        "ParentPath": "/",
+        "FileType": "file"
+    },
+    {
+       "FileName": "嘿嘿嘿.avi",
+		"VirName":" 3F7F9CE5589F070C89438A05617FE789",
+	    "CreateTime": "2016-11-08 00:00:00",
+	    "FileSize": "1048576",
+	    "FileExt": "video",
+	    "ParentPath": "/",
+	    "FileType": "file"
+	},
+	{
+	    "FileName": "这是名字很长很长的一个文件哦哦哦哦哦.mp3",
+		"VirName":" 3F7F9CE5589F070C89438A05617FE789",
+		"CreateTime": "2016-11-08 00:00:00",
+		"FileSize": "5",
+		"FileExt": "music",
+		"ParentPath": "/",
+		"FileType": "file"
+	},
+    {
+        "FileName": "Muyun.mp3",
+		"VirName":" 3F7F9CE5589F070C89438A05617FE789",
+        "CreateTime": "2016-11-08 00:00:00",
+        "FileSize": "5",
+        "FileExt": "music",
+        "ParentPath": "/",
+        "FileType": "file"
+    },
+    {
+        "FileName": "Muyun.mp3",
+		"VirName":" 3F7F9CE5589F070C89438A05617FE789",
+        "CreateTime": "2016-11-08 00:00:00",
+        "FileSize": "5",
+        "FileExt": "music",
+        "ParentPath": "/",
+        "FileType": "file"
+    },
+    {
+        "FileName": "Muyun.mp3",
+		"VirName":" 3F7F9CE5589F070C89438A05617FE789",
+        "CreateTime": "2016-11-08 00:00:00",
+        "FileSize": "5",
+        "FileExt": "music",
+        "ParentPath": "/",
+        "FileType": "file"
+    },
+    {
+        "FileName": "Muyun.mp3",
+		"VirName":" 3F7F9CE5589F070C89438A05617FE789",
+        "CreateTime": "2016-11-08 00:00:00",
+        "FileSize": "5",
+        "FileExt": "music",
+        "ParentPath": "/",
+        "FileType": "file"
+    },
+    {
+        "FileName": "Muyun.mp3",
+		"VirName":" 3F7F9CE5589F070C89438A05617FE789",
+        "CreateTime": "2016-11-08 00:00:00",
+        "FileSize": "5",
+        "FileExt": "music",
+        "ParentPath": "/",
+        "FileType": "file"
+    },
+    {
+        "FileName": "Muyun.mp3",
+		"VirName":" 3F7F9CE5589F070C89438A05617FE789",
+        "CreateTime": "2016-11-08 00:00:00",
+        "FileSize": "5",
+        "FileExt": "music",
+        "ParentPath": "/",
+        "FileType": "file"
+    },
+    {
+        "FileName": "Muyun.mp3",
+		"VirName":" 3F7F9CE5589F070C89438A05617FE789",
+        "CreateTime": "2016-11-08 00:00:00",
+        "FileSize": "5",
+        "FileExt": "music",
+        "ParentPath": "/",
+        "FileType": "file"
+    },
+    {
+        "FileName": "Muyun.mp3",
+		"VirName":" 3F7F9CE5589F070C89438A05617FE789",
+        "CreateTime": "2016-11-08 00:00:00",
+        "FileSize": "5",
+        "FileExt": "music",
+        "ParentPath": "/",
+        "FileType": "file"
+    },
+    {
+        "FileName": "Muyun.mp3",
+		"VirName":" 3F7F9CE5589F070C89438A05617FE789",
+        "CreateTime": "2016-11-08 00:00:00",
+        "FileSize": "5",
+        "FileExt": "music",
+        "ParentPath": "/",
+        "FileType": "file"
+    }
+]
