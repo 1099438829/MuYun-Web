@@ -14,7 +14,7 @@
 	export default {
 		name:'tree',
 		props:['item'],
-		data(){
+		data:function(){
 			return {
 				open:'',
 			}
@@ -24,4 +24,5 @@
 
 <style scoped>
 	li{font-size:16px;}
+	strong{cursor:default;}
 </style>

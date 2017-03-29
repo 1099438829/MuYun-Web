@@ -1,91 +1,94 @@
 /*
+	Author:AIOS | Date:2017-03-16 | QQ:1070053575
 	WARNING：
-		1.以下划线加帕斯卡命名法命名的为常量,如:'_Vue';
-		2.以小写字母加下划线命名的为变量,如:'ext','ext_list';
-		3.以帕斯卡命名法命名的为方法,如:'PostImg';
+		1.以小写字母加下划线命名的为变量,如:'ext','ext_list';(调试用方法如log及logs除外)
+		2.以帕斯卡命名法命名的为方法,如:'Post';
 */
 
-// 导入Vue^2.1.10、页面顶栏组件、页面侧栏组件、Post方法及国家省市县数据
-import _Vue from 'vue';
-import _Header from '../component/header';
-import _Aside from '../component/aside';
-import _Post from '../module/ajax_post';
-import _Cites from '../json/chinese_cites.json';
+// 导入CSS样式表及JS模块
+require('../css/reset.min');
+require('../css/base');
+require('../css/personal');
 
-// 开启Vue的错误提示,将输出到console
-_Vue.config.debug = true;
+import vue from 'vue';
+import cites from '../json/chinese_cites';
+import Post from '../module/ajax_post';
 
-// 输出数据到控制台,默认使用log方法
+// import vue_img from '../module/v-img-only';
+// vue.directive('img-only',vue_img);
+
+// 启动Vue调试模式
+vue.config.debug = true;
+
+// 打印单项数据,默认使用log方法
 function log(message,type='log'){
 	console[type](message);
 }
 
-// 输出多条数据到控制台
+// 打印多项数据
 function logs(...messages){
-	for(var item of messages)
-		log(item);
+	messages.forEach(item => log(item));
 }
 
 // 创建当前页面的Vue实例
-const _Personal = new _Vue({
-	// 挂载到id为personal的元素上
-	el:'#personal',
-	// 实例的元数据
-	data:{
+const personal = new vue({
+	el : '#personal',
+	data : {
 		// 用户的信息
-		info:{},
+		info : '',
 		// 侧栏列表内容
-		ext_list:[
+		ext_list : [
 			{ext:'self',name:'个人信息',},
 			{ext:'secure',name:'安全中心',},
 		],
 		// 当前选中的侧栏列表项
-		ext:'self',
+		ext : 'self',
 		// 用户信息备份
-		data:{},
+		data_bak : {},
 		// 用户头像的url
-		head_img:'',
+		head_img : '',
 		// 个人信息是否编辑状态
-		isEdit:'',
+		isEdit : '',
 		// 用户信息
-		name:'',
-		sex:'',
-		organ:'',
-		email:'',
-		mobile:'',
-		reg_date:'',
+		name : '',
+		sex : '',
+		organ : '',
+		email : '',
+		mobile : '',
+		reg_date : '',
 		// 用户生日相关,abc依次为年月日
-		birth_a:1950,
-		birth_b:1,
-		birth_c:1,
+		birth_a : 1950,
+		birth_b : 1,
+		birth_c : 1,
 		// 月日集合
-		month:[1,2,3,4,5,6,7,8,9,10,11,12],
-		day:[],
+		month : [1,2,3,4,5,6,7,8,9,10,11,12],
+		day : [],
 		// 用户所在地相关,abc依次为省市县
-		live_a:'广东省',
-		live_b:'广州市',
-		live_c:'白云区',
+		live_a : '广东省',
+		live_b : '广州市',
+		live_c : '白云区',
 		// 页面内文本框焦点所在
-		focus:'',
+		focus : '',
 		// secure中展开的表单
-		menu:'',
+		menu : '',
 		// Post返回的SMS 
-		sms:'',
+		sms : '',
 		// 用户输入的SMS
-		re_sms:'',
+		re_sms : '',
 		// 新手机号
-		new_mobile:'',
+		new_mobile : '',
 		// 新邮箱
-		new_email:'',
+		new_email : '',
 		// 旧密码
-		pword:'',
+		pword : '',
 		// 新密码
-		new_pword:'',
+		new_pword : '',
 		// 重新输入的新密码
-		re_new_pword:'',
+		re_new_pword : '',
+		// Test
+		onprogress : ''
 	},
-	// 实时计算的属性
-	computed:{
+	computed : {
 		// 填充1950至当前年份集合
 		year(){
 			var year = [];
@@ -104,45 +107,47 @@ const _Personal = new _Vue({
 		// 省市县列表内容填充
 		area_a(){
 			var area = [];
-			for(var key in _Cites)
+			for(var key in cites)
 				area.push(key);
 			return area;
 		},
 		area_b(){
-			if(this.live_a && _Cites[this.live_a].constructor == Array)
-				return _Cites[this.live_a];
+			if(this.live_a && cites[this.live_a].constructor == Array)
+				return cites[this.live_a];
 			var area = [];
-			for(var key in _Cites[this.live_a])
+			for(var key in cites[this.live_a])
 				area.push(key);
 			return area;
 		},
 		area_c(){
-			if(this.live_a && _Cites[this.live_a].constructor != Array) return _Cites[this.live_a][this.live_b];
-			return false;
+			if(this.live_a && cites[this.live_a].constructor != Array) return cites[this.live_a][this.live_b];
+			return '';
 		},
 		// 个人信息内容完成度
 		done(){
 			var name = !this.CheckInput(this.name) && !!this.name && this.name.length<=8,
 				birth = this.birth_a && this.birth_b,
-				live = this.live_a && (_Cites[this.live_a].constructor == Array ? this.live_b : this.live_c),
+				live = this.live_a && (cites[this.live_a].constructor == Array ? this.live_b : this.live_c),
 				oran = !this.CheckInput(this.organ) && !!this.organ && this.organ.length<=50 && this.organ!='未填写';
 			return (name+!!birth+!!live+oran+1)*20;
 		},
 	},
-	// 属性变化监听
-	watch:{
+	watch : {
 		live_a(newVal,oldVal){
 			if(oldVal) this.live_b = '';
 		},
 		live_b(newVal,oldVal){
 			if(oldVal) this.live_c = '';
 		},
+		onprogress(newVal){
+			log(newVal);
+		}
 	},
-	// 实例的方法
-	methods:{
+	methods : {
 		// 用户信息设置
 		SetInfo(data){
 			this.head_img = data.ImgSrc;
+			this.info = {};
 			this.info.mobile = data.Mobile;
 			this.info.user_name = data.UserName;
 			this.info.progress = (data.UseSpace / data.HadSpace * 156).toFixed(2) + 'px';
@@ -162,8 +167,8 @@ const _Personal = new _Vue({
 		// 退出
 		Exit(){
 			if(confirm('你真的要走吗(T_T)'))
-				_Post('/LoginReg/Logout',null,function(){
-					alert('好啦你走啦');
+				Post('/LoginReg/Logout',null,function(){
+					alert('你走');
 				});
 		},
 		// 侧栏列表项跳转
@@ -201,35 +206,46 @@ const _Personal = new _Vue({
 		},
 		// 上传头像
 		PostImg(event){
+			// 获取file控件
 			var target = event.target;
-			if(target.files[0]){
-				var that = this,
-					// 创建表单对象
-					form = new FormData(),
-					// 创建XHR对象
-					xml = new XMLHttpRequest();
 
-				// 填充文件进表单对象中
+			// 文件被选中后
+			if(target.files[0]){
+				// 以控件所属表单为基础创建Form对象
+				var form = new FormData(target.form);
+				// 把文件塞进Form对象中
 				form.append('img',target.files[0]);
 
-				xml.onload = function(){
-					if(xml.status == 200 && xml.readyState == 4){
-						log(xml.responseText);
-						// 创建文件读取器对象
-						var file = new FileReader();
-						file.readAsDataURL(target.files[0]);
-						file.onload = function(){
-							// 将用户头像改为被上传的头像文件
-							that.head_img = file.result;
-						};
+				// 创建读取对象
+				var reader = new FileReader();
+				// 解析被选中的文件
+				reader.readAsDataURL(target.files[0]);
+				// 解析完成后清除被选中文件
+				reader.onload = function(){
+					target.form.reset();
+				}
+
+				// 创建xhr对象
+				var xml = new XMLHttpRequest();
+				// 上传成功修正头像为被选中文件
+				xml.onload = () => {
+					if(xml.status == 200 && xml.readyState == 4)
+						this.head_img = reader.result;
+				}
+
+				xml.upload.onprogress = event => {
+					try{
+						this.onprogress = (event.loaded / event.total).toFixed(2) + '%' ;
+					}catch(e){
+						log('progress test error');
 					}
-				};
+				}
+
+				// 开启传送通道
 				xml.open('post','/UserCenter/SetHeadImg');
-				xml.setRequestHeader('Content-Type','multipart/form-data');
+				// 前往极乐世界
 				xml.send(form);
 			}
-			// 清空已选择文件
-			target.form.reset();
 		},
 		// 切换编辑模式
 		Toggle(){
@@ -258,7 +274,7 @@ const _Personal = new _Vue({
 	    		if(this.birth_a && !this.birth_c)
 	    			error('你得给我们一个明确的出生日期哦');
 
-				if(this.live_a && !(_Cites[this.live_a].constructor == Array ? this.live_b : this.live_c))
+				if(this.live_a && !(cites[this.live_a].constructor == Array ? this.live_b : this.live_c))
 					error('所在地也要填写完全哦');
 
 	    		if(this.organ.length>50)
@@ -283,7 +299,7 @@ const _Personal = new _Vue({
 		// 提交个人信息
 		SubmitSelf(){
 			var that = this;
-    		_Post('/UserCenter/UserInfoEdit',{
+    		Post('/UserCenter/UserInfoEdit',{
 	    			UserName:that.name,
 	    			Sex:that.sex,
 	    			Birthday:`${this.birth_a}-${this.birth_b}-${this.birth_c}`,
@@ -331,7 +347,7 @@ const _Personal = new _Vue({
 		// 获取验证码
 		GetSMS(){
 			var that = this;
-    		_Post('/SMS/ReSetMobileSMS',null,function(data){
+    		Post('/SMS/ReSetMobileSMS',null,function(data){
     			that.re_sms = data;
     		});
 		},
@@ -342,7 +358,7 @@ const _Personal = new _Vue({
     		}else if(!this.new_mobile){
     			log('你怎么可以不输入新的手机号呢');
     		}else{
-    			_Post('/UserCenter/ReSetMobile',null,function(data){
+    			Post('/UserCenter/ReSetMobile',null,function(data){
     				log('修改成功了咯');
     			});
     		}
@@ -353,82 +369,79 @@ const _Personal = new _Vue({
 			}else if(!this.new_email){
 				log('邮箱不能为空哦');
 			}else{
-				_Post('',{},function(data){
+				Post('',{},function(data){
 					log('修改可以了哦');
 				});
 			}
 		},
 		RePword(){
+			log(typeof this.pword);
 			if(!String(this.pword)){
     			log('怎么可以不输入原来的密码呢');
     		}else if(this.new_pword != this.re_new_pword){
     			log('哎呀你两次输入的密码不一样哦');
     		}else{
-    			_Post('/UserCenter/ReSetPWD',{},function(data){
+    			Post('/UserCenter/ReSetPWD',{},function(data){
     				log('修改成功啦');
     			});
     		}
-		},
+		}
 	},
-	// 实例内应用的组件
-	components:{
-		// 页面顶栏组件
-		'a-head':_Header,
-		// 页面侧栏组件
-		'a-side':_Aside,
+	components : {
+		// 页面顶栏
+		'a-head' : require('../vue/ahead'),
+		// 页面侧栏
+		'a-side' : require('../vue/aside')
 	},
-	// 自定义Vue指令
-	directives:{
+	directives : {
 		// 焦点赋予
 		focus(el,binding){
-			if(!_Personal) return;
-			if(binding.expression == _Personal.focus)
+			if(!personal) return;
+			if(binding.expression == personal.focus)
 				// secure状态下,延时赋予焦点以便动画完成
-				if(_Personal.ext == 'self'){
+				if(personal.ext == 'self'){
 					el.focus();
-					_Personal.focus = '';
+					personal.focus = '';
 				}else{
 					setTimeout(function(){
 						el.focus();
-						_Personal.focus = '';
+						personal.focus = '';
 					},700);
 				}
 		}
 	},
-	// 实例创建后执行的方法
 	created(){
-		var that = this;
 		this.MakeDay();
 
 		// 获取用户信息
-		// _Post('/Home/GetUserInfo',null,function(data){
-		// 	that.SetInfo(data.Data);	
-		// });
-
-		// _Post('/UserCenter/Index',null,function(data){
-		// 	that.LoadInfo(data.Results);
-		// });
-
-		// 测试用户信息
-		this.SetInfo({
-		    UserName: "木木",
-		    Sex: "man",
-		    UseSpace: 104857600,
-		    HadSpace: 1073741824,
-		    ImgSrc: 'http://img.muops.cn/muyun/headimg.jpg',
-		    Mobile: "18814373213"
+		Post('/Home/GetUserInfo',null,data => {
+			this.SetInfo(data.Data);
 		});
 
-		this.LoadInfo({
-            HeadImg: "http://img.muops.cn/muyun/headimg.jpg",
-            UserName: "木木",
-            Sex: "man",
-            Email: "mu951899341@gmail.com",
-            CreateTime: "2016-11-08 23:25:06",
-            Mobile: "18814373213",
-            Address: "广东省,广州市,白云区",
-            Organiztion: "广东白云学院",
-            Birthday: "1994-11-1"
-        });
-	},
-});
+		Post('/UserCenter/Index',null,data => {
+			this.LoadInfo(data.Data);
+		});
+
+		// 测试用户信息
+		// this.SetInfo({
+		// 	UserName: "木木",
+		// 	Sex: "man",
+		// 	UseSpace: 104857600,
+		// 	HadSpace: 1073741824,
+		// 	ImgSrc: 'http://img.muops.cn/muyun/headimg.jpg',
+		// 	Mobile: "18814373213"
+		// });
+
+		// this.LoadInfo({
+		// 	HeadImg: "http://img.muops.cn/muyun/headimg.jpg",
+		// 	UserName: "木木",
+		// 	Sex: "man",
+		// 	Email: "mu951899341@gmail.com",
+		// 	CreateTime: "2016-11-08 23:25:06",
+		// 	Mobile: "18814373213",
+		// 	Address: "广东省,广州市,白云区",
+		// 	Organiztion: "广东白云学院",
+		// 	Birthday: "1994-11-1"
+		// });
+	}
+})

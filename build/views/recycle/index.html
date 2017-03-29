@@ -1,71 +1,73 @@
 <!DOCTYPE HTML>
 
-<!-- Author:AIOS | Date:2017-02-26 | QQ:1070053575 -->
+<!-- Author:AIOS | Date:2017-03-27 | QQ:1070053575 -->
 
 <title>MuYun-Recycle</title>
 <!-- 设置页面文件编码 -->
 <meta charset=UTF-8>
 <!-- 移动端宽度及缩放设置 -->
 <meta name=viewport content='width=device-width,user-scalable=0,initial-scale=1.0'>
-<!-- CSS初级Reset -->
-<link rel=stylesheet href=../../contents/css/reset.min.css>
-<!-- CSS二级Reset及组件 -->
-<link rel=stylesheet href=../../contents/css/base.css>
-<!-- 当前页面CSS -->
+<!-- 引入CSS表 -->
 <link rel=stylesheet href=../../contents/css/recycle.css>
+<!-- <link rel=stylesheet href=../../src/css/reset.min.css>
+<link rel=stylesheet href=../../src/css/base.css>
+<link rel=stylesheet href=../../src/css/recycle.css> -->
 
-<div id=recycle v-cloak @contextmenu.prevent>
+<div id=recycle v-cloak v-on:contextmenu.prevent>
 	<!-- 页面顶栏组件 - header.vue -->
-	<a-head :sel='"file"'></a-head>
-	<!-- 页面侧栏组件 - aside.vue & ext_item.vue -->
-	<a-side :info=info :list=ext_list :ext=ext :exit=Exit></a-side>
+	<a-head v-bind:sel='"file"'></a-head>
+	<!-- 页面侧栏组件 - aside.vue -->
+	<a-side v-bind:info=info v-bind:list=ext_list v-bind:ext=ext v-bind:exit=Exit v-bind:link=ExtLink></a-side>
 	<!-- 页面核心部分 -->
-	<main class='dib pr mn'>
+	<main>
 		<!-- 资源管理器顶部操作区 -->
 		<header class=mn_hd>
 			<!-- 操作区左侧 -->
 			<div class=mn_hd_l>
 				<!-- 操作菜单 -->
 				<div class=mn_hd_menu v-show=index.length>
-					<a class='dib f14 tc vam mn_button type_recover' @click.prevent=ReCover>还原</a>
-					<a class='dib f14 tc vam mn_button type_del' @click.prevent=DelFile>彻底删除</a>
+					<a class='mn_button type_recover' v-on:click.prevnet=ReCover>还原</a>
+					<a class='mn_button type_del' v-on:click.prevent=DelFile>彻底删除</a>
 				</div>
 			</div>
 			<!-- 操作区右侧 -->
-			<div class='mn_hd_r pa'>
-				<nav class=mn_trail>
-					<a class='ellipsis vam dib'>清空回收站</a>
-				</nav>
-				<div class='mn_count f14'>
-					<span>文件/文件夹 {{dir.length}}</span>
+			<div class=mn_hd_r>
+				<div class=mn_count>
+					<span>文件/文件夹 {{dir.length}}</span><br>
+					<a v-on:click.prevent=ReCoverAll>还原全部</a>
+					<a v-on:click.prevent=DelAllFile>清空回收站</a>
 				</div>
 			</div>
 		</header>
 		<!-- 资源管理器页眉 -->
-		<div class='item_hd pr list'>
-			<div class='item_hd_check dib cp pa' :class='{sel:isAll}' @click=SelAll></div>
-			<span class='item_hd_name cp f14' @click='Sort("name")'>文件名</span>
-			<span class='item_hd_time cp f14' @click='Sort("time")'>创建日期</span>
-			<span class='item_hd_size cp f14' @click='Sort("size")'>文件大小</span>
+		<div class='item_hd list'>
+			<div class=item_hd_check v-bind:class='{sel:isAll}' v-on:click=SelAll></div>
+			<span class=item_hd_name v-on:click='Sort("name")'>文件名</span>
+			<span class=item_hd_time v-on:click='Sort("time")'>创建日期</span>
+			<span class=item_hd_size v-on:click='Sort("size")'>文件大小</span>
 		</div>
 		<!-- 资源管理器主体 -->
- 		<ul class='mn_dir pa list' @contextmenu.prevent.stop=ShowMenu>
+ 		<ul class='mn_dir list' v-on:contextmenu.prevent.stop=ShowMenu v-on:click=Reset>
  			<li class=mn_dir_none v-if=!dir.length>
- 				<div class=tc>
-					<img alt='没有文件哦~' src=../../contents/images/folder/file_none.svg><br>
+ 				<div>
+					<img alt='没有文件哦~' src=../../contents/image/file_none.svg><br>
 					<span>这里没有文件哦</span>
 				</div>
  			</li>
  			<!-- 文件列表项组件 - file_item.vue -->
-			<a-item v-for='(item,index) in dir' :item=item :index=index :click=FileClick :menu=ShowMenu></a-item>
+			<a-item v-for='(item,index) in dir' v-bind:item=item v-bind:index=index v-bind:click=FileClick v-bind:menu=ShowMenu></a-item>
 		</ul>
 	</main>
 	<!-- 右键菜单组件 - contextmenu.vue -->
-	<a-menu :context=file_context :index=file_index :fixed=file_fixed></a-menu>
-	<a-menu :context=folder_context :fixed=folder_fixed></a-menu>
+	<keep-alive>
+		<a-menu v-bind:context=file_context v-bind:index=menu_target v-bind:fixed=file_fixed></a-menu>
+	</keep-alive>
+	<keep-alive>
+		<a-menu v-bind:context=folder_context v-bind:fixed=folder_fixed></a-menu>
+	</keep-alive>
 </div>
 
-<!-- Vue^2.1.10 -->
+<!-- Vue^2.2 -->
 <script src=../../contents/js/vue.min.js></script>
-<!-- 由webpack^2.2.1打包 -->
+<!-- 经Webpack打包的核心逻辑 -->
 <script src=../../contents/js/recycle.js></script>

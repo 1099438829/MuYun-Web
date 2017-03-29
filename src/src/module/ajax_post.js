@@ -5,20 +5,17 @@ module.exports = function(url,search,callback){
 	xml.onload = function(){
 		if(xml.status >= 200 && xml.status < 400 && xml.readyState == 4){
 			try{
-				var json = JSON.parse(xml.responseText);
-				console.log(json);
-				callback(json);
+				callback(JSON.parse(xml.responseText));
 			}catch(e){
-				console.log(xml.responseText);
 				callback(xml.responseText);
 			}
 		}else{
-			callback('error');
+			callback('request error');
 		}
 	}
 
 	xml.onerror = function(){
-		callback('error');
+		callback('xml error');
 	}
 			
 	for(var key in search)

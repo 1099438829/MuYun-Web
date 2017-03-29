@@ -1,50 +1,34 @@
 /*
-	Author:AIOS | Date:2017-03-05 | QQ:1070053575
+	Author:AIOS | Date:2017-03-27 | QQ:1070053575
 	WARNING：
-		1.以下划线加帕斯卡命名法命名的为常量,如:'_Vue','_LastItem';
-		2.以小写字母加下划线命名的为变量,如:'ext','ext_list';(log及logs两个方法为常量)
-		3.以帕斯卡命名法命名的为方法,如:'ReName';
+		1.以小写字母加下划线命名的为变量,如:'ext','ext_list';(调试用方法如log及logs除外)
+		2.以帕斯卡命名法命名的为方法,如:'Post','LastItem';
 */
 
-// 导入Vue^2.1.10、页面顶栏组件、页面侧栏组件、文件项组件、文件目录树组件、右键菜单组件及Post方法
-// 还有测试用的数据
-import _Vue from 'vue';
-import _Header from '../component/header';
-import _Aside from '../component/aside';
-import _Item from '../component/file_item';
-import _Menu from '../component/contextmenu';
-import _Tree from '../component/file_tree';
-import _Post from '../module/ajax_post';
-import _FileListTest from '../json/FileListTest.json';
-import _FileTreeTest from '../json/FileTreeTest.json';
+require('../css/reset.min');
+require('../css/base');
+require('../css/home');
 
-// 开启Vue的错误提示,将输出到console
-_Vue.config.debug = true;
+import vue from 'vue';
+import Post from '../module/ajax_post';
 
-// 输出数据到控制台,默认使用log方法
+vue.config.debug = true;
+
 function log(message,type='log'){
 	console[type](message);
 }
 
-// 输出多条数据到控制台
 function logs(...messages){
-	for(var item of messages)
-		log(item);
+	messages.forEach(item => log(item));
 }
 
-// 返回数组的最后一项
-const _LastItem = arr => arr[arr.length-1];
+const LastItem = arr => arr[arr.length-1];
 
-// 创建当前页面的Vue实例
-new _Vue({
-	// 挂载到id为home的元素上
-	el:'#home',
-	// 实例的元数据
-	data:{
-		// 用户的信息
-		info:'',
-		// 侧栏列表内容
-		ext_list:[
+new vue({
+	el : '#home',
+	data : {
+		info : '',
+		ext_list : [
 			{ext:'all',name:'全部文件',},
 			{ext:'doc',name:'文档',},
 			{ext:'images',name:'图片',},
@@ -53,74 +37,61 @@ new _Vue({
 			{ext:'others',name:'其它',},
 			{ext:'recycle',name:'回收站',}
 		],
-		// 当前选中的侧栏列表项
-		ext:'',
-		// 用户的ID
-		id:'',
-		// 面包屑列表
-		trail:[{name:'全部文件',vir:'/'}],
-		// 当前选中项的索引集合
-		index:[],
-		// 当前显示模式
-		mode:'thumb',
-		// 搜索字段
-		search_text:'',
-		// 文件列表
-		dir:'',
-		// 按shift选择文件项的起点
-		shift_bak:'',
-		// 右键菜单相关
-		file_index:'',
-		file_fixed:'',
-		folder_fixed:'',
-		// 文件目录树
-		file_tree:'',
+		ext : '',
+		id : '',
+		trail : [{name:'全部文件',vir:'/'}],
+		index : [],
+		mode : 'list',
+		search_text : '',
+		dir : '',
+		shift_bak : '',
+		menu_target : '',
+		file_fixed : '',
+		folder_fixed : '',
+		file_tree : '',
+		upload_list : [],
 	},
-	// 实时计算的属性
-	computed:{
-		// 是否全选当前目录文件
+	computed : {
 		isAll(){
 			return this.dir.length == this.index.length && this.dir[0];
 		},
-		// 缩略图及列表模式的图标路径
-		img_mode(){
-			return `../../contents/images/folder/${this.mode}.svg`;
-		},
-		// 列表为空时的图片路径
-		img_none(){
-			var img = this.trail[0].search ? 'search' : 'file';
-			return `../../contents/images/folder/${img}_none.svg`;
-		},
 		file_context(){
 			return [
-				{name:'打开',todo:this.FileOpen},
+				{name:'打开',todo:this.FileOpen,line:true},
 				{name:'下载',todo:this.Fuck},
 				{name:'发送',todo:this.Fuck},
-				{name:'剪切',todo:this.Fuck},
-				{name:'复制',todo:this.Fuck},
-				{name:'删除',todo:this.DelFile},
+				{name:'复制',todo:this.LoadTree},
+				{name:'剪切',todo:this.LoadTree,line:true},
 				{name:'重命名',todo:this.ReName},
-				{name:'属性',todo:this.Fuck},
+				{name:'删除',todo:this.DelFile,line:true},
+				{name:'属性',todo:this.Fuck}
 			];
 		},
 		folder_context(){
 			return [
+				{name:'新建文件夹',todo:this.NewDir,line:true},
 				{name:'切换显示模式',todo:this.Toggle},
-				{name:'排序方式',todo:this.Fuck},
-				{name:'刷新',todo:this.Fuck},
-				{name:'新建文件夹',todo:this.NewDir},
-				{name:'属性',todo:this.Fuck},
+				{
+					name : '排序方式',
+					todo(){event.stopPropagation()},
+					child : [
+						{name:'文件名',todo:this.Sort,type:'name'},
+						{name:'创建时间',todo:this.Sort,type:'time'},
+						{name:'文件大小',todo:this.Sort,type:'size'},
+						{name:'文件类别',todo:this.Sort,type:'ext'}
+					]
+				},
+				{name:'刷新',todo:this.Fuck,line:true},
+				{name:'属性',todo:this.Fuck}
 			];
-		},
+		}
 	},
-	// 实例的方法
-	methods:{
-		// 未定义的右键方法
+	methods : {
 		Fuck(index){
 			log(index);
 		},
-		// 用户信息设置
 		SetInfo(data){
+			this.LoadDir(this.ext,data.UserId,'/','全部文件');
 			this.id = data.UserId;
 			this.info = {};
 			this.info.mobile = data.Mobile;
@@ -143,38 +114,42 @@ new _Vue({
 		// 退出
 		Exit(){
 			if(confirm('你真的要走吗(T_T)'))
-				_Post('/LoginReg/Logout',null,function(){
-					alert('好啦你走啦');
-				});
+				Post('/LoginReg/Logout',null,function(){
+					alert('给我走');
+				})
 		},
 		// 侧栏列表项跳转
 		ExtLink(ext){
 			this.ext = ext;
-			// 复位面包屑
 			if(ext == 'recycle'){
-				location.href = '../recycle/index.html';
+				location.href = '/Home/Recycle';
 			}else{
+				// 复位面包屑
 				this.trail = [{name:'全部文件',vir:'/'}];
 				this.LoadDir(ext,this.id,'/','全部文件');
 			}
 		},
 		// 文件列表加载
 		LoadDir(ext,id,vir,name){
-			log('had into the function used to load the files list');
-			_Post('/Home/Index',{FileExt:ext,ParentPath:vir,UserId:id}, data => {
-				this.dir = data.Results.map( item => {
-					return {
-						sel : '',
-						ext : item.FileExt,
-						vir : item.VirName,
-						name : item.FileName,
-						type : item.FileType,
-						size : item.FileSize,
-						time : item.CreateTime.replace(/-/g,'/').substr(0,16),
-					};
-				});
-				if(!this.trail[0] || _LastItem(this.trail).vir != vir) this.trail.push({name:name,vir:vir});
-			});
+			Post('/Home/Index',{FileExt:ext,ParentPath:vir,UserId:id}, data => {
+				this.SetDir(data.Results);
+				if(!this.trail[0] || LastItem(this.trail).vir != vir) this.trail.push({name:name,vir:vir});
+				this.Reset();
+			})
+		},
+		// 文件列表设置
+		SetDir(data){
+			this.dir = data.map( item => {
+				return {
+					sel : '',
+					ext : item.FileExt,
+					vir : item.VirName,
+					name : item.FileName,
+					type : item.FileType,
+					size : item.FileSize,
+					time : item.CreateTime.replace(/-/g,'/').substr(0,16).replace(/\s/,'　')
+				}
+			})
 		},
 		// 切换列表与缩略图模式
 		Toggle(){
@@ -184,7 +159,7 @@ new _Vue({
 		// 返回上一级目录
 		GoBack(){
 			this.trail.pop();
-			this.LoadDir('all',this.id,_LastItem(this.trail).vir,_LastItem(this.trail).name);
+			this.LoadDir('all',this.id,LastItem(this.trail).vir,LastItem(this.trail).name);
 		},
 		// 面包屑跳转
 		TrailLink(index){
@@ -195,15 +170,16 @@ new _Vue({
 		},
 		// 搜索
 		Search(){
-			if(!this.search_text) log('搜索字段不能为空哦(>_<)');
-
-			_Post('/Home/SearchFile',{SearchStr:this.search_text.replace(/ /g,',')},data => {
-				this.reset();
-				this.trail = [{search:true}];
-				this.dir = data.Data ;
-				if(!data.Data) log('没有找到相关内容');
-				this.ext = 'all';
-			});
+			if(this.search_text){
+				Post('/Home/SearchFile',{SearchStr:this.search_text.replace(/ /g,',')},data => {
+					this.Reset();
+					this.trail = [];
+					this.ext = '';
+					this.SetDir(data.Data);
+				});
+			}else{
+				log('搜索字段不能为空哦(>_<)');
+			}
 		},
 		// 新建文件夹
 		NewDir(){
@@ -227,10 +203,10 @@ new _Vue({
 			}else{
 				this.dir.push({name,type:'dir',sel:''});
 				log('创建成功');
-				_Post('/Home/CreateDir',{FileName:name,ParentPath:_LastItem(this.trail).vir},data => {
+				Post('/Home/CreateDir',{FileName:name,ParentPath:LastItem(this.trail).vir},data => {
 					if(data.Code == 1)
-						this.LoadDir('all',this.id,_LastItem(this.trail).vir,_LastItem(this.trail).name);
-				});
+						this.LoadDir('all',this.id,LastItem(this.trail).vir,LastItem(this.trail).name);
+				})
 			}
 		},
 		// 重命名文件
@@ -245,21 +221,23 @@ new _Vue({
 				this.dir[index].name = name;
 				log('重命名成功');
 				this.Reset();
-				_Post('/Home/ReNameFile',{NewFileName:name,VirName:this.dir[index].vir},data => {
+				Post('/Home/ReNameFile',{NewFileName:name,VirName:this.dir[index].vir},data => {
 					this.dir[index].name = name;
-				});
+				})
 			}
 		},
 		// 检查输入值是否合法
 		CheckName(name,index){
 			var j=this.dir.length,
 				regexp = [/\?/,/\</,/\>/,/\|/,/\*/,/\:/,/\"/,/\'/,/\//,/\\/];
-			for(var item of regexp){
+
+			regexp.forEach(item => {
 				if(name.search(item)+1){
 					log('不许输入那些奇奇怪怪的字符哦');
 					return true;
 				}
-			}
+			});
+
 			while(j>0){
 				for(var i in this.dir){
 					if(i == index) continue;
@@ -268,6 +246,13 @@ new _Vue({
 						return true;
 					}
 				}
+				// this.dir.forEach((item,i) => {
+				// 	if(i == index) continue;
+				// 	if(name == item.name){
+				// 		log('不许输入这里出现过的名字哦');
+				// 		return true;
+				// 	}
+				// });
 				j--;
 			}
 			if(!name.trim()){
@@ -282,26 +267,29 @@ new _Vue({
 				this.Reset();
 			else{
 				this.index = [];
-				for(var i in this.dir){
-					this.dir[i].sel = true;
-					this.index.push(i);
-				}
+				this.dir.forEach((item,index) => {
+					item.sel = true;
+					this.index.push(index);
+				});
 			}
 		},
 		// 点击文件
 		FileClick(index){
-			var that = this,
-				list = this.dir,
-				node = event.target.nodeName.toLowerCase();
+			var list = this.dir,
+				type = event.target.dataset.type;
 
-			function todo(index){
+			this.file_fixed = '';
+			this.folder_fixed = '';
+
+
+			var todo = index => {
 				list[index].sel = !list[index].sel;
 				if(list[index].sel){
-					that.index.push(index);
+					this.index.push(index);
 				}else{
-					for(var item of that.index){
+					for(var item of this.index){
 						if(item == index){
-							that.index.splice(i,1);
+							this.index.splice(i,1);
 							break;
 						}
 					}
@@ -310,9 +298,8 @@ new _Vue({
 
 			if(event.shiftKey){
 				if(this.index.length){
-					for(var item of list)
-						item.sel = false;
 					this.index = [];
+					list.forEach(item => item.sel = '');
 					for(var i=0;i <= Math.abs(index-this.shift_bak);i++){
 						var j = index > this.shift_bak ? this.shift_bak+i : this.shift_bak-i;
 						todo(j);
@@ -322,42 +309,36 @@ new _Vue({
 					this.shift_bak = index;
 				}
 			}else{
-				if(node == 'div' || event.ctrlKey){
+				if(type == 'check' || event.ctrlKey){
 					todo(index);
 					this.shift_bak = index;
-				}else if(node == 'img' || node == 'em'){
+				}else if(type == 'name' || type == 'icon')
 					this.FileOpen(index);
-				}
 			}
 		},
 		// 打开文件
 		FileOpen(index){
 			var item = this.dir[index];
-			if(item.type == 'dir'){
+			if(item.type == 'dir')
 				this.LoadDir(this.ext,this.id,item.vir,item.name);
-			}else{
+				// this.trail.push({name:item.name,vir:item.vir});
+			else
 				log('oh you had download me');
-			}
 		},
 		// 删除文件
 		DelFile(){
 			var json = [];
 
-			for(var i of this.index){
+			for(var i of this.index)
 				json.push({VirName:this.dir[i].vir,FileType:this.dir[i].type});
-			}
-
-			log(json);
 
 			if(confirm('你真的忍心丢我们到黑黑的回收站吗(>_<)'))
-				_Post('/Home/DeleteFileEnable',{DeleteArray:JSON.stringify(json)},data => {
+				Post('/Home/DeleteFileEnable',{DeleteArray:JSON.stringify(json)},data => {
 					if(data == 'Succeed')
-						this.LoadDir(this.ext,this.id,_LastItem(this.trail).vir,_LastItem(this.trail).name);
-				});
+						this.LoadDir(this.ext,this.id,LastItem(this.trail).vir,LastItem(this.trail).name);
+				})
 			else
 				log('就知道你最好了(-3-)');
-
-			// 隐藏菜单
 		},
 		// 右键菜单
 		ShowMenu(index){
@@ -368,58 +349,68 @@ new _Vue({
 				this.folder_fixed = {left:event.clientX,top:event.clientY};
 			}else{
 				// 文件项
-				this.file_index = index;
+				this.menu_target = index;
+				if(!this.dir[index].sel){
+					this.Reset();
+					this.dir[index].sel = true;
+					this.index.push(index);
+				}
 				this.file_fixed = {left:event.clientX,top:event.clientY};
 			}
 		},
 		// 文件目录树读取
 		LoadTree(){
-			this.file_tree = _FileTreeTest.Rows;
-			// _Post('/Home/GetDirIndex',null,data => {
-			// 	this.file_tree = data.Rows;
-			// });
+			Post('/Home/GetDirIndex',null,data => {
+				this.file_tree = data.Rows;
+			})
 		},
 		// 文件排序
 		Sort(type){
-			log('waiting for sort this list ...');
+			this.file_fixed = '';
+			this.folder_fixed = '';
+
+			log(type);
+			// var reverse,
+			// 	time = this.dir.length;
+			// while(time){
+			// 	for(var i=0;i<time-1;i++){
+			// 		if(this.dir[i][type] > this.dir[i+1][type]){
+			// 			if(!this.dir[i].size) continue;
+			// 			var temp = this.dir[i];
+			// 			this.dir[i] = this.dir[i+1];
+			// 			Vue.set(this.dir,i+1,temp);
+			// 			reverse = true;
+			// 		}
+			// 	}
+			// 	time--;
+			// }
+			// if(!reverse) this.dir.reverse();
 		},
 		// 重置状态
 		Reset(){
 			this.index = [];
 			this.shift_bak = '';
-			for(var item of this.dir)
-				item.sel = '';
+			this.dir.forEach(item => item.sel = '');
 		},
-		LoadDirTest(data){
-			this.dir = data.map( item => {
-				return {
-					sel : '',
-					ext : item.FileExt,
-					vir : item.VirName,
-					name : item.FileName,
-					type : item.FileType,
-					size : item.FileSize,
-					time : item.CreateTime.replace(/-/g,'/').substr(0,16),
-				};
-			});
+		// Upload
+		Upload(file){
+			this.upload_list.push({name:file.name});
 		},
 	},
-	// 组件
-	components:{
-		// 页面顶栏组件
-		'a-head':_Header,
-		// 页面侧栏组件
-		'a-side':_Aside,
-		// 文件项组件
-		'a-item':_Item,
-		// 右键菜单组件
-		'a-menu':_Menu,
-		// 文件目录树组件
-		'a-tree':_Tree,
+	components : {
+		// 页面头部
+		'a-head' : require('../vue/ahead'),
+		// 页面侧栏
+		'a-side' : require('../vue/aside'),
+		// 文件项
+		'a-item' : require('../vue/file_item'),
+		// 右键菜单
+		'a-menu' : require('../vue/contextmenu'),
+		// 文件目录树
+		'a-tree' : require('../vue/file_tree'),
+		// 上传控件
+		// 'a-upload' : require('../vue/upload')
 	},
-	// 自定义指令
-	
-	// 实例创建后执行的方法
 	created(){
 		// 添加键盘事件
 		document.addEventListener('keydown',event => {
@@ -452,34 +443,26 @@ new _Vue({
 			this.folder_fixed = '';
 		});
 
-		// 获取查询字符串
-		var query = document.URL.match(/\?(.*)/) || [0,'all'];
-		// 根据查询字符串设置当前文件类
-		this.ext = ['all','doc','images','video','music','others'].indexOf(query[1]) + 1 ? query[1] : 'all';
-		// 伪造URL,单纯是编者的恶趣味
-		history.pushState(null,null,'./index.html');
+		// 获取文件类
+		var ext = sessionStorage['pomelo_aios_file_ext'];
+		// 设置当前文件类
+		this.ext = ['all','doc','images','video','music','others'].indexOf(ext) + 1 ? ext : 'all';
 
-		// 获取用户信息
-		// _Post('/Home/GetUserInfo',null,data => {
-		// 	this.SetInfo(data.Data);
-		// 	if(data.Code != 1) return ;
-		// 	// 获取文件列表
-		// 	this.LoadDir(this.ext,this.id,'/','全部文件');
-		// });
-
-		// 测试用户信息
-		this.SetInfo({
-			"UseId": 1,
-		    "UserName": "木木",
-		    "Sex": "",
-		    "UseSpace": 104857600,
-		    "HadSpace": 1073741824,
-		    "ImgSrc": 'http://img.muops.cn/muyun/headimg.jpg',
-			"IsVip": 1,
-		    "Mobile": "18814373213",
+		// 获取用户信息及文件列表
+		Post('/Home/GetUserInfo',null,data => {
+			this.SetInfo(data.Data);
 		});
 
-		// 测试文件列表
-		this.LoadDirTest(_FileListTest);
-	},
-});
+		// 测试用户信息及文件列表
+		// this.SetInfo({
+		// 	UserId : 1,
+		// 	UserName : "木木",
+		// 	UseSpace : 104857600,
+		// 	HadSpace : 1073741824,
+		// 	ImgSrc : 'http://img.muops.cn/muyun/headimg.jpg',
+		// 	Mobile : 18814373213
+		// });
+
+		// this.SetDir(require('../json/file_list_test'));
+	}
+})

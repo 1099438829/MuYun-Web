@@ -1,0 +1,56 @@
+[
+    {
+        "FileName": "B文件夹",
+        "VirName": "B",
+        "CreateTime": "2016-11-08 00:00:00",
+        "FileSize": "",
+        "FileExt": "",
+        "ParentPath": "/",
+        "FileType": "dir"
+    },
+    {
+        "FileName": "A文件夹",
+		"VirName": "A",
+        "CreateTime": "2016-11-22 00:37:39",
+        "FileSize": "",
+        "FileExt": "",
+        "ParentPath": "/",
+        "FileType": "dir"
+    },
+    {
+        "FileName": "C文件夹",
+		"VirName": "C",
+	    "CreateTime": "2016-11-08 00:00:00",
+	    "FileSize": "",
+	    "FileExt": "",
+	    "ParentPath": "/",
+	    "FileType": "dir"
+	},
+    {
+        "FileName": "C文件.doc",
+        "VirName": "B-",
+        "CreateTime": "2016-11-08 00:00:00",
+        "FileSize": "1235",
+        "FileExt": "doc",
+        "ParentPath": "/",
+        "FileType": "file"
+    },
+	{
+	    "FileName": "A文件.mp3",
+		"VirName": "A-",
+		"CreateTime": "2016-11-09 00:00:00",
+		"FileSize": "5",
+		"FileExt": "music",
+		"ParentPath": "/",
+		"FileType": "file"
+	},
+    {
+        "FileName": "B文件.avi",
+		"VirName": "B-",
+        "CreateTime": "2016-11-20 00:00:00",
+        "FileSize": "50000",
+        "FileExt": "video",
+        "ParentPath": "/",
+        "FileType": "file"
+    }
+]

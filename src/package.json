@@ -9,20 +9,21 @@
   "author": "AIOS",
   "license": "ISC",
   "devDependencies": {
-    "autoprefixer-loader": "^3.2.0",
-    "babel-core": "^6.23.1",
+    "babel-core": "^6.24.0",
     "babel-loader": "^6.3.2",
-    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-es2015": "^6.24.0",
     "css-loader": "^0.26.2",
+    "extract-text-webpack-plugin": "^2.1.0",
     "file-loader": "^0.10.1",
     "html-loader": "^0.4.5",
     "json-loader": "^0.5.4",
+    "postcss-loader": "^1.3.3",
     "url-loader": "^0.5.8",
     "vue-loader": "^11.1.4",
-    "vue-template-compiler": "^2.2.1",
+    "vue-template-compiler": "^2.2.4",
     "webpack": "^2.2.1"
   },
   "dependencies": {
-    "vue": "^2.2.1"
+    "vue": "^2.2.4"
   }
 }
