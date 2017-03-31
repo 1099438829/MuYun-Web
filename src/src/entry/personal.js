@@ -5,7 +5,6 @@
 		2.以帕斯卡命名法命名的为方法,如:'Post';
 */
 
-// 导入CSS样式表及JS模块
 require('../css/reset.min');
 require('../css/base');
 require('../css/personal');
@@ -14,79 +13,51 @@ import vue from 'vue';
 import cites from '../json/chinese_cites';
 import Post from '../module/ajax_post';
 
-// import vue_img from '../module/v-img-only';
-// vue.directive('img-only',vue_img);
-
-// 启动Vue调试模式
 vue.config.debug = true;
 
-// 打印单项数据,默认使用log方法
 function log(message,type='log'){
 	console[type](message);
 }
 
-// 打印多项数据
 function logs(...messages){
 	messages.forEach(item => log(item));
 }
 
-// 创建当前页面的Vue实例
 const personal = new vue({
 	el : '#personal',
 	data : {
-		// 用户的信息
 		info : '',
-		// 侧栏列表内容
 		ext_list : [
 			{ext:'self',name:'个人信息',},
 			{ext:'secure',name:'安全中心',},
 		],
-		// 当前选中的侧栏列表项
 		ext : 'self',
-		// 用户信息备份
 		data_bak : {},
-		// 用户头像的url
 		head_img : '',
-		// 个人信息是否编辑状态
 		isEdit : '',
-		// 用户信息
 		name : '',
 		sex : '',
 		organ : '',
 		email : '',
 		mobile : '',
 		reg_date : '',
-		// 用户生日相关,abc依次为年月日
 		birth_a : 1950,
 		birth_b : 1,
 		birth_c : 1,
-		// 月日集合
 		month : [1,2,3,4,5,6,7,8,9,10,11,12],
 		day : [],
-		// 用户所在地相关,abc依次为省市县
 		live_a : '广东省',
 		live_b : '广州市',
 		live_c : '白云区',
-		// 页面内文本框焦点所在
 		focus : '',
-		// secure中展开的表单
 		menu : '',
-		// Post返回的SMS 
 		sms : '',
-		// 用户输入的SMS
 		re_sms : '',
-		// 新手机号
 		new_mobile : '',
-		// 新邮箱
 		new_email : '',
-		// 旧密码
 		pword : '',
-		// 新密码
 		new_pword : '',
-		// 重新输入的新密码
 		re_new_pword : '',
-		// Test
-		onprogress : ''
 	},
 	computed : {
 		// 填充1950至当前年份集合
@@ -138,9 +109,6 @@ const personal = new vue({
 		},
 		live_b(newVal,oldVal){
 			if(oldVal) this.live_c = '';
-		},
-		onprogress(newVal){
-			log(newVal);
 		}
 	},
 	methods : {
@@ -231,14 +199,6 @@ const personal = new vue({
 				xml.onload = () => {
 					if(xml.status == 200 && xml.readyState == 4)
 						this.head_img = reader.result;
-				}
-
-				xml.upload.onprogress = event => {
-					try{
-						this.onprogress = (event.loaded / event.total).toFixed(2) + '%' ;
-					}catch(e){
-						log('progress test error');
-					}
 				}
 
 				// 开启传送通道

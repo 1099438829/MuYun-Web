@@ -5,7 +5,6 @@
 		2.以帕斯卡命名法命名的为方法,如:'Post';
 */
 
-// 导入CSS样式表及JS模块
 require('../css/reset.min');
 require('../css/base');
 require('../css/recycle');
@@ -13,29 +12,20 @@ require('../css/recycle');
 import vue from 'vue';
 import Post from '../module/ajax_post';
 
-// import vue_img from '../module/v-img-only';
-// vue.directive('img-only',vue_img);
-
-// 启动Vue调试模式
 vue.config.debug = true;
 
-// 打印单项数据,默认使用log方法
 function log(message,type='log'){
 	console[type](message);
 }
 
-// 打印多项数据
 function logs(...messages){
 	messages.forEach(item => log(item));
 }
 
-// 创建当前页面的Vue实例
 new vue({
 	el : '#recycle',
 	data : {
-		// 用户的信息
 		info : '',
-		// 侧栏列表内容
 		ext_list : [
 			{ext:'all',name:'全部文件',},
 			{ext:'doc',name:'文档',},
@@ -45,17 +35,14 @@ new vue({
 			{ext:'others',name:'其它',},
 			{ext:'recycle',name:'回收站',}
 		],
-		// 当前选中的侧栏列表项
 		ext : 'recycle',
-		// 用户的ID
 		id : '',
-		// 当前选中项的索引集合
 		index : [],
-		// 文件列表
 		dir : '',
-		// 按shift选择文件项的起点
+		dir_folder : [],
+		dir_file : [],
+		dir_had_sort : '',
 		shift_bak : '',
-		// 右键菜单相关
 		menu_target : '',
 		file_fixed : '',
 		folder_fixed : '',
@@ -68,7 +55,7 @@ new vue({
 		// 文件右键菜单
 		file_context(){
 			return [
-				{name:'还原',todo:this.ReCover},
+				{name:'还原',todo:this.ReCover,line:true},
 				{name:'彻底删除',todo:this.DelFile},
 				{name:'属性',todo:this.Fuck}
 			];
@@ -76,10 +63,20 @@ new vue({
 		// 目录右键菜单
 		folder_context(){
 			return [
-				{name:'排序方式',todo:this.Fuck},
-				{name:'刷新',todo:this.LoadDir},
 				{name:'全部还原',todo:this.ReCoverAll},
-				{name:'清空回收站',todo:this.DelAllFile},
+				{name:'清空回收站',todo:this.DelAllFile,line:true},
+				{
+					name : '排序方式',
+					todo(){event.stopPropagation()},
+					line : true,
+					child : [
+						{name:'文件名',todo:this.Sort,type:'name'},
+						{name:'创建时间',todo:this.Sort,type:'time'},
+						{name:'文件大小',todo:this.Sort,type:'size'},
+						{name:'文件类别',todo:this.Sort,type:'ext'}
+					]
+				},
+				{name:'刷新',todo:this.LoadDir},
 				{name:'属性',todo:this.Fuck}
 			];
 		}
@@ -140,15 +137,22 @@ new vue({
 		// 文件列表设置
 		SetDir(data){
 			this.dir = data.map( item => {
-				return {
+				var _item = {
 					sel : '',
 					ext : item.FileExt,
 					vir : item.VirName,
 					name : item.FileName,
 					type : item.FileType,
-					size : item.FileSize,
+					size : Number(item.FileSize),
 					time : item.CreateTime.replace(/-/g,'/').substr(0,16).replace(/\s/,'　')
 				}
+
+				if(item.FileType == 'dir')
+					this.dir_folder.push(_item);
+				else
+					this.dir_file.push(_item);
+
+				return _item;
 			})
 		},
 		// 全选文件
@@ -257,7 +261,32 @@ new vue({
 		},
 		// 文件排序
 		Sort(type){
-			log('waiting for sort this list ...');
+			this.file_fixed = '';
+			this.folder_fixed = '';
+
+			var todo = (list,mode=0) => {
+				if(type == 'size' && mode) return;
+
+				var time = list.length;
+				while(time){
+					for(var i=0 ; i<time-1 ; i++)
+						if( list[i][type] > list[i+1][type] ){
+							[ list[i] , list[i+1] ] = [ list[i+1] , list[i] ];
+							this.dir_had_sort = true;
+						}
+					time--;
+				}
+			}
+
+			todo(this.dir_folder,1);
+			todo(this.dir_file);
+
+			if(this.dir_had_sort){
+				this.dir = this.dir_folder.concat(this.dir_file);
+				this.dir_had_sort = '';
+			}else{
+				this.dir.reverse();
+			}
 		},
 		// 重置状态
 		Reset(){

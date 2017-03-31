@@ -8,16 +8,16 @@
 <!-- 移动端宽度及缩放设置 -->
 <meta name=viewport content='width=device-width,user-scalable=0,initial-scale=1.0'>
 <!-- 引入CSS表 -->
-<link rel=stylesheet href=../../contents/css/home.css>
+<link rel=stylesheet href=../../contents/css/home.min.css>
 <!-- <link rel=stylesheet href=../../src/css/reset.min.css>
 <link rel=stylesheet href=../../src/css/base.css>
 <link rel=stylesheet href=../../src/css/home.css> -->
 
-<div id=home v-cloak v-on:contextmenu.prevent>
+<div id=home v-cloak @contextmenu.prevent>
 	<!-- 页面顶栏组件 - header.vue -->
-	<a-head v-bind:sel='"file"'></a-head>
+	<a-head :sel='"file"'></a-head>
 	<!-- 页面侧栏组件 - aside.vue -->
-	<a-side v-bind:info=info v-bind:list=ext_list v-bind:ext=ext v-bind:exit=Exit v-bind:link=ExtLink></a-side>
+	<a-side :info=info :list=ext_list :ext=ext :exit=Exit :link=ExtLink></a-side>
 	<!-- 页面核心部分 -->
 	<main>
 		<!-- 资源管理器顶部操作区 -->
@@ -33,7 +33,7 @@
 				</label>
 				<input type=file id=to_file>
 				<!-- 新建文件夹 -->
-				<a class='mn_button type_new' v-show='ext == "all"' v-on:click.prevent=NewDir>
+				<a class='mn_button type_new' v-show='ext == "all"' @click.prevent=NewDir>
 					<div class=mn_button_img>
 						<i></i>
 					</div>
@@ -42,19 +42,19 @@
 				<!-- 操作菜单 -->
 				<div class=mn_hd_menu v-show=index.length>
 					<a class='mn_button type_down'>下载</a>
-					<a class='mn_button type_rename' v-on:click.prevent=ReName>重命名</a>
-					<a class='mn_button type_copy' v-on:click=LoadTree>复制到</a>
-					<a class='mn_button type_move' v-on:click=LoadTree>移动到</a>
+					<a class='mn_button type_rename' @click.prevent=ReName>重命名</a>
+					<a class='mn_button type_copy' @click.prevent=LoadTree>复制到</a>
+					<a class='mn_button type_move' @click.prevent=LoadTree>移动到</a>
 					<a class='mn_button type_more'>更多...</a>
-					<a class='mn_button type_del' v-on:click.prevent=DelFile>删除</a>
+					<a class='mn_button type_del' @click.prevent=DelFile>删除</a>
 				</div>
 				<!-- 面包屑 -->
 				<nav class=mn_trail>
-					<a class=mn_trail_back v-show='trail[1] && ext' v-on:click.prevent=GoBack>返回上一级</a>
+					<a class=mn_trail_back v-show='trail[1] && ext' @click.prevent=GoBack>返回上一级</a>
 					<a class=mn_trail_search v-show=!ext>搜索结果：</a>
 					<span v-for='(item,index) in trail' v-if=item.name>
 						<span class=mn_trail_gt v-if=index>&gt;</span>
-						<a class=ellipsis v-bind:title=item.name v-on:click.prevent=TrailLink(index)>{{item.name}}</a>
+						<a class=ellipsis :title=item.name @click.prevent=TrailLink(index)>{{item.name}}</a>
 					</span>
 				</nav>
 			</div>
@@ -62,32 +62,32 @@
 			<div class=mn_hd_r>
 				<!-- 搜索 -->
 				<div class=mn_hd_handle>
-					<label for=to_search class=mn_search_label title='开始搜索' v-on:click=Search></label>
-					<input id=to_search placeholder='请输入关键字' v-model.trim=search_text v-bind:style='{width:search_text?"150px":""}' v-on:change=Search>
+					<label for=to_search class=mn_search_label title='开始搜索' @click=Search></label>
+					<input id=to_search placeholder='请输入关键字' v-model.trim=search_text :style='{width:search_text?"150px":""}' @change=Search>
 				</div>
 				<!-- 上传控件 -->
 				<div class='mn_upload mn_hd_handle'>
 					<!-- <a-upload ref=upload></a-upload> -->
 				</div>
 				<!-- 切换显示模式 -->
-				<div class='mn_mode mn_hd_handle' v-bind:class='"type_"+mode' v-on:click=Toggle></div>
+				<div class='mn_mode mn_hd_handle' :class='"type_"+mode' @click=Toggle></div>
 				<div class=mn_count>
 					<span>文件 / 文件夹 {{dir.length}}</span>
 				</div>
 			</div>
 		</header>
 		<!-- 资源管理器页眉 -->
-		<div class=item_hd v-bind:class=mode>
-			<span class=item_all v-bind:class='{sel:isAll}' v-on:click=SelAll>全选</span>
-			<div class=item_hd_check v-bind:class='{sel:isAll}' v-on:click=SelAll></div>
-			<span class=item_hd_name v-on:click='Sort("name")'>文件名</span>
+		<div class=item_hd :class=mode>
+			<span class=item_all :class='{sel:isAll}' @click=SelAll>全选</span>
+			<div class=item_hd_check :class='{sel:isAll}' @click=SelAll></div>
+			<span class=item_hd_name @click='Sort("name")'>文件名</span>
 			<div class=item_hd_plus>
-				<span class=item_hd_size v-on:click='Sort("size")'>文件大小</span>
-				<span class=item_hd_time v-on:click='Sort("time")'>创建日期</span>
+				<span class=item_hd_size @click='Sort("size")'>文件大小</span>
+				<span class=item_hd_time @click='Sort("time")'>创建日期</span>
 			</div>
 		</div>
 		<!-- 资源管理器主体 -->
- 		<ul class=mn_dir v-bind:class=mode v-on:contextmenu.prevent.stop=ShowMenu v-on:click=Reset>
+ 		<ul class=mn_dir :class=mode @contextmenu.prevent.stop=ShowMenu @click=Reset>
  			<li class=mn_dir_none v-if=!dir.length>
  				<div>
 					<img alt='没有文件哦~' src=../../contents/image/file_none.svg v-if=ext>
@@ -96,25 +96,25 @@
 				</div>
  			</li>
  			<!-- 文件列表项组件 - file_item.vue -->
-			<a-item v-for='(item,index) in dir' v-bind:item=item v-bind:index=index v-bind:click=FileClick v-bind:menu=ShowMenu></a-item>
+			<a-item v-for='(item,index) in dir' :item=item :index=index :click=FileClick :menu=ShowMenu></a-item>
 		</ul>
 	</main>
 	<!-- 右键菜单组件 - contextmenu.vue -->
 	<keep-alive>
-		<a-menu v-bind:context=file_context v-bind:index=menu_target v-bind:fixed=file_fixed></a-menu>
+		<a-menu :context=file_context :index=menu_target :fixed=file_fixed></a-menu>
 	</keep-alive>
 	<keep-alive>
-		<a-menu v-bind:context=folder_context v-bind:fixed=folder_fixed v-bind:type='"folder"'></a-menu>
+		<a-menu :context=folder_context :fixed=folder_fixed :type='"folder"'></a-menu>
 	</keep-alive>
 	<!-- 文件目录树 -->
 	<ul class=file_tree v-if=file_tree>
-		<div class=file_tree_close title='关掉这个东东' v-on:click='file_tree = ""'></div>
+		<div class=file_tree_close title='关掉这个东东' @click='file_tree = ""'></div>
 		<!-- 文件目录树组件 - file_tree.vue -->
-		<a-tree v-for='item in file_tree' v-bind:item=item></a-tree>
+		<a-tree v-for='item in file_tree' :item=item></a-tree>
 	</ul>
 </div>
 
 <!-- Vue^2.2 -->
 <script src=../../contents/js/vue.min.js></script>
 <!-- 经Webpack打包的核心逻辑 -->
-<script src=../../contents/js/home.js></script>
+<script src=../../contents/js/home.min.js></script>

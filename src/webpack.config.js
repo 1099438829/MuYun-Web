@@ -1,4 +1,4 @@
-const PackCSS = require('extract-text-webpack-plugin');
+var PackCSS = require('extract-text-webpack-plugin');
 
 module.exports = {
 	entry : {
@@ -8,7 +8,7 @@ module.exports = {
 	},
 	output : {
 		path : './contents/js',
-		filename : '[name].js'
+		filename : '[name].min.js'
 	},
 	module : {
 		rules : [
@@ -44,7 +44,7 @@ module.exports = {
 		]
 	},
 	plugins : [
-		new PackCSS('../css/[name].css')
+		new PackCSS('../css/[name].min.css')
 	],
 	resolve : {
 		extensions : ['.js','.css','.vue','.json']

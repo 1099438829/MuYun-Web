@@ -27,11 +27,11 @@
 	    "FileType": "dir"
 	},
     {
-        "FileName": "C文件.doc",
+        "FileName": "C文件.exe",
         "VirName": "B-",
         "CreateTime": "2016-11-08 00:00:00",
         "FileSize": "1235",
-        "FileExt": "doc",
+        "FileExt": "app",
         "ParentPath": "/",
         "FileType": "file"
     },
@@ -50,6 +50,15 @@
         "CreateTime": "2016-11-20 00:00:00",
         "FileSize": "50000",
         "FileExt": "video",
+        "ParentPath": "/",
+        "FileType": "file"
+    },
+    {
+        "FileName": "D文件.zip",
+        "VirName": "B-",
+        "CreateTime": "2016-11-08 00:00:00",
+        "FileSize": "1235",
+        "FileExt": "rar",
         "ParentPath": "/",
         "FileType": "file"
     }

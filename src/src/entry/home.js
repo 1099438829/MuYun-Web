@@ -1,5 +1,5 @@
 /*
-	Author:AIOS | Date:2017-03-27 | QQ:1070053575
+	Author:AIOS | Date:2017-03-31 | QQ:1070053575
 	WARNING：
 		1.以小写字母加下划线命名的为变量,如:'ext','ext_list';(调试用方法如log及logs除外)
 		2.以帕斯卡命名法命名的为方法,如:'Post','LastItem';
@@ -22,7 +22,7 @@ function logs(...messages){
 	messages.forEach(item => log(item));
 }
 
-const LastItem = arr => arr[arr.length-1];
+var LastItem = arr => arr[arr.length-1];
 
 new vue({
 	el : '#home',
@@ -41,9 +41,12 @@ new vue({
 		id : '',
 		trail : [{name:'全部文件',vir:'/'}],
 		index : [],
-		mode : 'list',
+		mode : 'thumb',
 		search_text : '',
 		dir : '',
+		dir_file : [],
+		dir_folder : [],
+		dir_had_sort : '',
 		shift_bak : '',
 		menu_target : '',
 		file_fixed : '',
@@ -60,12 +63,12 @@ new vue({
 				{name:'打开',todo:this.FileOpen,line:true},
 				{name:'下载',todo:this.Fuck},
 				{name:'发送',todo:this.Fuck},
-				{name:'复制',todo:this.LoadTree},
-				{name:'剪切',todo:this.LoadTree,line:true},
+				{name:'复制到',todo:this.LoadTree},
+				{name:'移动到',todo:this.LoadTree,line:true},
 				{name:'重命名',todo:this.ReName},
 				{name:'删除',todo:this.DelFile,line:true},
 				{name:'属性',todo:this.Fuck}
-			];
+			]
 		},
 		folder_context(){
 			return [
@@ -83,7 +86,7 @@ new vue({
 				},
 				{name:'刷新',todo:this.Fuck,line:true},
 				{name:'属性',todo:this.Fuck}
-			];
+			]
 		}
 	},
 	methods : {
@@ -140,15 +143,22 @@ new vue({
 		// 文件列表设置
 		SetDir(data){
 			this.dir = data.map( item => {
-				return {
+				var _item = {
 					sel : '',
 					ext : item.FileExt,
 					vir : item.VirName,
 					name : item.FileName,
 					type : item.FileType,
-					size : item.FileSize,
+					size : Number(item.FileSize),
 					time : item.CreateTime.replace(/-/g,'/').substr(0,16).replace(/\s/,'　')
 				}
+
+				if(item.FileType == 'dir')
+					this.dir_folder.push(_item);
+				else
+					this.dir_file.push(_item);
+
+				return _item;
 			})
 		},
 		// 切换列表与缩略图模式
@@ -369,22 +379,29 @@ new vue({
 			this.file_fixed = '';
 			this.folder_fixed = '';
 
-			log(type);
-			// var reverse,
-			// 	time = this.dir.length;
-			// while(time){
-			// 	for(var i=0;i<time-1;i++){
-			// 		if(this.dir[i][type] > this.dir[i+1][type]){
-			// 			if(!this.dir[i].size) continue;
-			// 			var temp = this.dir[i];
-			// 			this.dir[i] = this.dir[i+1];
-			// 			Vue.set(this.dir,i+1,temp);
-			// 			reverse = true;
-			// 		}
-			// 	}
-			// 	time--;
-			// }
-			// if(!reverse) this.dir.reverse();
+			var todo = (list,mode=0) => {
+				if(type == 'size' && mode) return;
+
+				var time = list.length;
+				while(time){
+					for(var i=0 ; i<time-1 ; i++)
+						if( list[i][type] > list[i+1][type] ){
+							[ list[i] , list[i+1] ] = [ list[i+1] , list[i] ];
+							this.dir_had_sort = true;
+						}
+					time--;
+				}
+			}
+
+			todo(this.dir_folder,1);
+			todo(this.dir_file);
+
+			if(this.dir_had_sort){
+				this.dir = this.dir_folder.concat(this.dir_file);
+				this.dir_had_sort = '';
+			}else{
+				this.dir.reverse();
+			}			
 		},
 		// 重置状态
 		Reset(){

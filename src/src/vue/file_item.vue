@@ -6,7 +6,6 @@
  		<div class=item_plus>
  			<div class=item_handle @click.stop></div>
  			<div class=item_handle @click.stop></div>
- 			<div class=item_handle @click.stop></div>
 			<span class=item_size>{{size}}</span>
  			<time class=item_time>{{item.time}}</time>
  		</div>
@@ -20,12 +19,12 @@
 			size:function(){
 				var size = this.item.size;
 
-				if(size / 1048576 >= 1){
+				if(!size){
+					return '--';
+				}else if(size / 1048576 >= 1){
 					return (size / 1048576).toFixed(1) + 'GB';
 				}else if(size / 1024 >= 1){
 					return (size / 1024).toFixed(1) + 'MB';
-				}else if(!size){
-					return '--';
 				}else{
 					return size + '.0KB';
 				}
@@ -48,16 +47,16 @@
 .thumb .item_icon{width:44px;height:52px;margin-top:24px;}
 .thumb .item:hover .item_check{display:block;}
 .thumb .sel .item_check{display:block;background-color:#208DE3;}
+.thumb .sel .item_check::after{content:'';display:block;width:8px;height:8px;margin:6px;border-radius:5px;background:#F4F5F7;box-shadow:0 0 2px 0 #FFF;}
 .thumb .item_plus{display:none;}
 
 .list .item{height:37px;padding-top:5px;border-bottom:1px solid #DDD;}
 .list .item_check{left:-28px;top:15px;}
-.list .sel .item_check,.item_handle{background:#272822;}
 .list .item_icon{width:32px;height:32px;margin-left:10px;}
 .list .item_name{margin-left:24px;font-size:12px;vertical-align:middle;line-height:34px;}
 .list .item_plus{float:right;height:37px;margin-top:-5px;}
 
-.item_handle{display:none;vertical-align:middle;cursor:pointer;width:20px;height:20px;}
+.item_handle{display:none;vertical-align:middle;cursor:pointer;width:20px;height:20px;background:#272822;}
 .item_handle+.item_handle{margin-left:8px;}
 .item_size{width:60px;margin-left:50px;margin-right:80px;line-height:42px;text-align:center;}
 .item_time{width:110px;margin-right:40px;line-height:42px;}

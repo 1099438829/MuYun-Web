@@ -36,7 +36,7 @@ a.mn_trail_search,a.mn_trail_search:hover{color:#999;cursor:default;}
 .mn_hd_r{position:absolute;right:40px;top:8px;text-align:right;}
 .mn_hd_handle{display:inline-block;vertical-align:middle;cursor:pointer;}
 
-.mn_search_label{position:absolute;right:92px;background:url(../image/folder/search.svg) 7px 7px no-repeat;cursor:pointer;}
+.mn_search_label{position:absolute;right:92px;background:url(../image/folder/search.svg) 8px 8px no-repeat;cursor:pointer;}
 #to_search{border:0;text-indent:16px;transition:width .6s;}
 #to_search:hover,#to_search:focus{width:150px;}
 
@@ -60,7 +60,9 @@ a.mn_trail_search,a.mn_trail_search:hover{color:#999;cursor:default;}
 .item_hd_check{position:absolute;display:inline-block;cursor:pointer;}
 .item_all::before{content:'';display:inline-block;margin-right:14px;vertical-align:middle;}
 .item_all::before,.item_hd_check,.list .item_check{width:12px;height:12px;border:1px solid #272822;box-shadow:inset 0 0 2px 0 #272822;}
-.item_all.sel::before,.item_hd_check.sel,.list .item_check.sel{background:#272822;}
+.item_all.sel::after{position:absolute;top:13px;left:35px;}
+.item_all.sel::after,.item_hd_check.sel::after,.list .sel .item_check::after{content:'';width:8px;height:8px;background:#272822;}
+.item_hd_check.sel::after,.list .sel .item_check::after{display:block;margin:2px;}
 
 .mn_dir_none{width:100%;padding-left:50%;}
 .mn_dir_none div{width:30%;min-width:210px;margin-left:calc(-15% - 100px);margin-top:100px;text-align:center;}

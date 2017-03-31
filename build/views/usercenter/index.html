@@ -8,7 +8,7 @@
 <!-- 移动端宽度及缩放设置 -->
 <meta name=viewport content='width=device-width,user-scalable=0,initial-scale=1.0'>
 <!-- 引入CSS -->
-<link rel=stylesheet href=../../contents/css/personal.css>
+<link rel=stylesheet href=../../contents/css/personal.min.css>
 <!-- <link rel=stylesheet href=../../src/css/reset.min.css>
 <link rel=stylesheet href=../../src/css/base.css>
 <link rel=stylesheet href=../../src/css/personal.css> -->
@@ -17,13 +17,13 @@
 	<!-- 页面顶栏组件 - header.vue -->
 	<a-head></a-head>
 	<!-- 页面侧栏组件 - aside.vue -->
-	<a-side v-bind:info=info v-bind:list=ext_list v-bind:ext=ext v-bind:img=head_img v-bind:exit=Exit v-bind:link=ExtLink></a-side>
+	<a-side :info=info :list=ext_list :ext=ext :img=head_img :exit=Exit :link=ExtLink></a-side>
 	<!-- 页面核心部分 -->
 	<main>
 		<!-- 用于清空头像选择控件内容 -->
 		<form id=head_img_form enctype='multipart/form-data'></form>
 		<!-- 个人信息部分 -->
-		<form class=mn_self v-if='ext=="self"' v-on:submit.prevent>
+		<form class=mn_self v-if='ext=="self"' @submit.prevent>
 			<table>
 				<tr v-if=isEdit>
 					<td colspan=2 class=mn_self_title>
@@ -33,35 +33,35 @@
 						<label>昵称：</label>
 					<td v-else>
 						<label class=mn_img for=self_img>
-							<img width=70 height=70 class=mn_img_src v-bind:src=head_img>
+							<img width=70 height=70 class=mn_img_src :src=head_img>
 							<div class=mn_img_holder>修改</div>
 						</label>
-						<input type=file id=self_img accept=image/jpeg,image/png form=head_img_form v-on:change=PostImg>
+						<input type=file id=self_img accept=image/jpeg,image/png form=head_img_form @change=PostImg>
 					<td>
-						<input class=mn_self_text maxlength=8 v-model.trim=name v-bind:disabled=!isEdit v-focus=name>
-						<i class=icon v-if=isEdit v-on:click=ClearName></i>
+						<input class=mn_self_text maxlength=8 v-model.trim=name :disabled=!isEdit v-focus=name>
+						<i class=icon v-if=isEdit @click=ClearName></i>
 				<tr>
 					<td>
 						<label>性别：</label>
 					<td>
 						<input type=radio id=man value=man v-model=sex>
-						<label class=mn_radio for=man v-bind:class='{sel:sex=="man"}' v-if=isEdit>男</label>
+						<label class=mn_radio for=man :class='{sel:sex=="man"}' v-if=isEdit>男</label>
 						<input type=radio id=woman value=woman v-model=sex>
-						<label class=mn_radio for=woman v-bind:class='{sel:sex!="man"}' v-if=isEdit>女</label>
+						<label class=mn_radio for=woman :class='{sel:sex!="man"}' v-if=isEdit>女</label>
 						<span v-if=!isEdit>{{sex=='man'?'男':'女'}}</span>
 				<tr>
 					<td>
 						<label>生日：</label>
 					<td>
 						<template v-if=isEdit>
-							<select v-model=birth_a v-on:change=MakeDay>
-								<option v-for='value in year' v-bind:value=value>{{value+'年'}}</option>
+							<select v-model=birth_a @change=MakeDay>
+								<option v-for='value in year' :value=value>{{value+'年'}}</option>
 							</select>
-							<select v-model=birth_b v-on:change=MakeDay>
-								<option v-for='value in month' v-bind:value=value>{{value+'月'}}
+							<select v-model=birth_b @change=MakeDay>
+								<option v-for='value in month' :value=value>{{value+'月'}}
 							</select>
 							<select v-model=birth_c>
-								<option v-for='value in day' v-bind:value=value>{{value+'日'}}
+								<option v-for='value in day' :value=value>{{value+'日'}}
 							</select>
 						</template>
 						<span v-else>{{birth_a?birth_a+'年'+birth_b+'月'+birth_c+'日':'未填写'}}</span>
@@ -73,10 +73,10 @@
 							<select v-model=live_a>
 								<option v-for='value in area_a'>{{value}}
 							</select>
-							<select v-model=live_b v-show=live_a v-bind:style='{width:(live_b&&live_b.length*14)+18+"px"}'>
+							<select v-model=live_b v-show=live_a :style='{width:(live_b&&live_b.length*14)+18+"px"}'>
 								<option v-for='value in area_b'>{{value}}
 							</select>
-							<select v-model=live_c v-show=area_c v-bind:style='{width:(live_c&&live_c.length*14)+18+"px"}'>
+							<select v-model=live_c v-show=area_c :style='{width:(live_c&&live_c.length*14)+18+"px"}'>
 								<option v-for='value in area_c'>{{value}}
 							</select>
 						</template>
@@ -85,7 +85,7 @@
 					<td>
 						<label>学校/企业：</label>
 					<td>
-						<input class='mn_self_text ellipsis' maxlength=50 v-model.trim=organ v-bind:disabled=!isEdit v-focus=organ>
+						<input class='mn_self_text ellipsis' maxlength=50 v-model.trim=organ :disabled=!isEdit v-focus=organ>
 				<tr v-if=!isEdit>
 					<td>
 						<label>注册日期：</label>
@@ -95,23 +95,23 @@
 					<td>
 						<label>个人资料完成度：</label>
 					<td class=mn_progress>
-						<div v-bind:style='{width:done*2+"px"}'></div>
+						<div :style='{width:done*2+"px"}'></div>
 						<span>{{done+'%'}}</span>
 				<tr>
 					<td colspan=2 class=mn_button>
-						<button v-bind:type='[isEdit?"submit":"button"]' v-on:click=Toggle>{{isEdit?'保存':'编辑'}}</button>
+						<button :type='[isEdit?"submit":"button"]' @click=Toggle>{{isEdit?'保存':'编辑'}}</button>
 			</table>
 		</form>
 		<ul class=mn_secure v-else>
-			<li v-bind:class='{menu:menu=="mobile"}'>
+			<li :class='{menu:menu=="mobile"}'>
 				<span>绑定手机</span>
 				<span>{{mobile}}</span>
-				<span v-on:click='ShowMenu("mobile")'>修改</span>
-				<form class=mobile v-on:submit.prevent=ReMobile>
+				<span @click='ShowMenu("mobile")'>修改</span>
+				<form class=mobile @submit.prevent=ReMobile>
 					<div>
 						<label>输入验证码</label>
 						<input class=mn_secure_sms v-model=sms v-focus=mobile>
-						<button v-on:click.prevent=GetSMS>获取</button>
+						<button @click.prevent=GetSMS>获取</button>
 					</div>
 					<div>
 						<label>输入新号码</label>
@@ -119,26 +119,26 @@
 					</div>
 					<div>
 						<button type=submit>确定</button>
-						<button class=cancel v-on:click.prevent=ShowMenu>取消</button>
+						<button class=cancel @click.prevent=ShowMenu>取消</button>
 					</div>
 				</form>
-			<li v-bind:class='{menu:menu=="email"}'>
+			<li :class='{menu:menu=="email"}'>
 				<span>绑定邮箱</span>
 				<span>{{email}}</span>
-				<span v-on:click='ShowMenu("email")'>修改</span>
-				<form class=email v-on:submit.prevent=ReEmail>
+				<span @click='ShowMenu("email")'>修改</span>
+				<form class=email @submit.prevent=ReEmail>
 					<div>
 						<label>输入新邮箱</label>
 						<input type=email v-model.trim=new_email v-focus=email>
 					</div>
 					<div>
 						<button type=submit>确定</button>
-						<button class=cancel v-on:click.prevent=ShowMenu>取消</button>
+						<button class=cancel @click.prevent=ShowMenu>取消</button>
 					</div>
 				</form>
-			<li v-bind:class='{menu:menu=="pword"}'>
+			<li :class='{menu:menu=="pword"}'>
 				<span>修改密码</span>
-				<span v-on:click='ShowMenu("pword")'>修改</span>
+				<span @click='ShowMenu("pword")'>修改</span>
 				<form class=pword>
 					<div class=mn_secure_pword>
 						<label>输入旧密码</label>
@@ -154,7 +154,7 @@
 					</div>
 					<div>
 						<button type=submit>确定</button>
-						<button class=cancel v-on:click.prevent=ShowMenu>取消</button>
+						<button class=cancel @click.prevent=ShowMenu>取消</button>
 					</div>
 				</form>
 		</ul>
@@ -164,4 +164,4 @@
 <!-- Vue^2.2 -->
 <script src=../../contents/js/vue.min.js></script>
 <!-- 经Webpack打包的核心逻辑 -->
-<script src=../../contents/js/personal.js></script>
+<script src=../../contents/js/personal.min.js></script>
