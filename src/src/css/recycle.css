@@ -1,40 +1,13 @@
 .mn_hd{height:72px;padding-top:8px;}
-
-.mn_hd_l{margin-left:32px;}
+.mn_hd_left{margin-left:32px;}
 
 label.mn_button{cursor:pointer;}
-.mn_button{display:inline-block;width:70px;height:28px;border:2px solid #0078D7;color:#0078D7;font:14px/2 '微软雅黑';vertical-align:middle;text-align:center;}
+.mn_button{display:inline-block;width:80px;height:28px;border:2px solid #0078D7;color:#0078D7;font:14px/2 '微软雅黑';vertical-align:middle;text-align:center;margin-right:20px;border-radius:10px;}
 .mn_button:hover{color:#0078D7;}
-.mn_hd_menu{display:inline;}
 
-.type_del{margin-left:30px;border:2px solid #F00;color:#F00;}
+.type_del{border:2px solid #F00;color:#F00;}
 .type_del:hover{color:#F00;}
 
-.type_recover,.type_del{border-radius:8px;}
-
-.mn_hd_r{position:absolute;right:40px;top:8px;text-align:right;}
+.mn_hd_right{right:40px;top:8px;text-align:right;}
 
 .mn_count{font:14px/32px '微软雅黑';color:#999;margin-top:8px;}
-
-.mn_dir{position:absolute;top:112px;bottom:0;left:0;right:0;padding-bottom:40px;white-space:normal;background:#FFF;overflow:auto;}
-.item_hd{position:relative;height:31px;border-bottom:1px solid #DDD;}
-
-.item_all{line-height:32px;}
-.item_all,.item_hd_name,.item_hd_time,.item_hd_size{font-size:14px;cursor:pointer;}
-.item_hd_check{position:absolute;display:inline-block;cursor:pointer;}
-.item_all::before{content:'';display:inline-block;margin-right:14px;vertical-align:middle;}
-.item_all::before,.item_hd_check,.item_check{width:12px;height:12px;border:1px solid #272822;box-shadow:inset 0 0 2px 0 #272822;}
-.item_all.sel::before,.item_hd_check.sel,.item_check.sel{background:#272822;}
-
-.mn_dir_none{width:100%;padding-left:50%;}
-.mn_dir_none div{width:30%;min-width:210px;margin-left:calc(-15% - 100px);margin-top:100px;text-align:center;}
-.mn_dir_none img{width:20%;min-width:120px;margin-bottom:24px;}
-.mn_dir_none span{font:30px '幼圆';color:#B5B5B5;}
-
-.list{width:calc(100% - 60px);padding-left:60px;}
-.item_hd{width:calc(100% - 120px);margin-left:60px;}
-.item_hd_check{left:-28px;top:10px;}
-.item_hd_name{margin-left:-60px;line-height:32px;}
-.item_hd_size,.item_hd_time{float:right;line-height:32px;}
-.item_hd_size{width:60px;margin-right:80px;}
-.item_hd_time{width:110px;margin-right:58px;}

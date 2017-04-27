@@ -1,27 +1,22 @@
 module.exports = function(url,search,callback){
-	var data = '',
-		xml = new XMLHttpRequest();
+  var xhr = new XMLHttpRequest();
 
-	xml.onload = function(){
-		if(xml.status >= 200 && xml.status < 400 && xml.readyState == 4){
-			try{
-				callback(JSON.parse(xml.responseText));
-			}catch(e){
-				callback(xml.responseText);
-			}
-		}else{
-			callback('request error');
-		}
-	}
+  xhr.onload = function(){
+    if(xhr.status >= 200 && xhr.status < 400)
+      callback(JSON.parse(xhr.responseText));
+    else
+      callback('request is error , the status is ' + xhr.status);
+  }
 
-	xml.onerror = function(){
-		callback('xml error');
-	}
+  xhr.onerror = function(){
+    callback('xhr error');
+  }
 			
-	for(var key in search)
-		data += `${key}=${search[key]}&`;
+  var data = '';
+  for(var key in search)
+    data += `${key}=${search[key]}&`;
 			
-	xml.open('post',url);
-	xml.setRequestHeader('Content-Type','application/x-www-form-urlencoded;charset=UTF-8');
-	xml.send(data);
-};
+  xhr.open('post',url);
+  xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+  xhr.send(data);
+}

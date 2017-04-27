@@ -1,31 +1,31 @@
-module.exports = function(file,url,callback,progress = null){
-	var form = document.createElement('form');
-	form.setAttribute('enctype','multipart/form-data');
+module.exports = function(config,callback,progress = null){
+  var form = document.createElement('form');
+  form.setAttribute('enctype','multipart/form-data');
 
-	var form_data = new FormData(form);
-	form_data.append('file',file);
+  var data = new FormData(form);
 
-	var xml = new XMLHttpRequest();
+  data.append('File',config.file);
+  data.append('FileType',config.type);
+  data.append('FilePath',config.file_vir);
+  data.append('ParentPath',config.path_vir);
 
-	xml.onload = function(){
-		if(xml.status == 200 && xml.readyState == 4){
-			try{
-				callback(JSON.parse(xml.responseText));
-			}catch(e){
-				callback(xml.responseText);
-			}
-		}
-		else{
-			callback('request error');
-		}
-	}
+  var xhr = new XMLHttpRequest();
 
-	xml.upload.onprogress = progress;
+  xhr.onload = function(){
+      if(xhr.status == 200)
+        callback(JSON.parse(xhr.responseText));
+      else
+        callback('request is error , the status is ' + xhr.status);
+  }
 
-	xml.onerror = function(){
-		callback('xml error');
-	}
+  xhr.upload.onprogress = progress;
 
-	xml.open('post',url);
-	xml.send(form_data);
+  xhr.onerror = function(){
+    callback('xhr error');
+  }
+
+  xhr.open('post','/Home/UpLoadFile');
+  xhr.send(data);
+
+  return xhr;
 }
