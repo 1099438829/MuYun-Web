@@ -53,7 +53,7 @@
   <a-menu v-bind:list=context_file v-bind:fixed=fixed_file v-bind:target=menu_target></a-menu>
 
   <a-alert v-bind:config=alert_config v-on:close=CloseAlert></a-alert>
-  <a-tips v-bind:message=tips v-on:close=CloseTips></a-tips>
+  <a-tips v-if=tips_config v-bind:uuid=tips_uuid v-bind:config=tips_config v-on:close=CloseTips></a-tips>
 </div>
 
 <script src=../../contents/js/vue.min.js></script>

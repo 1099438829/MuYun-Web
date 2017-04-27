@@ -97,7 +97,7 @@
 	<a-tree v-bind:tree=file_tree v-on:complete=SubmitTree v-on:close=ResetTree></a-tree>
 
   <a-alert v-bind:config=alert_config v-on:close=CloseAlert></a-alert>
-  <a-tips v-bind:message=tips v-on:close=CloseTips></a-tips>
+  <a-tips v-if=tips_config v-bind:uuid=tips_uuid v-bind:config=tips_config v-on:close=CloseTips></a-tips>
 </div>
 
 <script src=../../contents/js/vue.min.js></script>
