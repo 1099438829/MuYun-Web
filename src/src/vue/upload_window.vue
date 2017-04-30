@@ -94,7 +94,6 @@
 		},
 		methods: {
 			CheckLoading(){
-				this.Reset();
 				if(!this.loading)
 					setTimeout(() => {
 						this.loading = this.wait.shift();
@@ -128,6 +127,7 @@
 				this.loading = '';
 				this.loaded_size = 0;
 				this.loading_size = 0;
+				this.progress = '0px';
 				clearInterval(this.load_timer);
 			}
 		},

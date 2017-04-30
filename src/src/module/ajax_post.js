@@ -2,7 +2,7 @@ module.exports = function(url,search,callback){
   var xhr = new XMLHttpRequest();
 
   xhr.onload = function(){
-    if(xhr.status >= 200 && xhr.status < 400)
+    if(xhr.status == 200)
       callback(JSON.parse(xhr.responseText));
     else
       callback('request is error , the status is ' + xhr.status);

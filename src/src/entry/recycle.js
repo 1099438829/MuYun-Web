@@ -36,7 +36,8 @@ new vue({
 		menu_target: '',
 		shift_bak : '',
 		alert_config: '',
-		tips: ''
+		tips_uuid: '',
+		tips_config: ''
 	},
 	computed: {
 		isAll(){
@@ -84,7 +85,7 @@ new vue({
 					this.SetDir(data.Data);
 					this.Reset();
 				}else{
-					this.tips = data.Msg;
+					this.ShowTips(data.Msg,'error');
 				}
 			})
 		},
@@ -113,14 +114,10 @@ new vue({
 		ReLoad(){
 			this.LoadDir();
 			Post('/Home/GetUserInfo',null,data => {
-				if(data.Code == 1){
-					setTimeout(()=>{
-						this.tips = '';
-					},1000);
+				if(data.Code == 1)
 					this.user_info = data.Data;
-				}else{
-					this.tips = data.Msg;
-				}
+				else
+					this.ShowTips(data.Msg,'error');
 			})
 		},
 		SelAll(){
@@ -183,9 +180,10 @@ new vue({
 				json.push({VirName:this.dir[i].vir,FileType:this.dir[i].type});
 
 			Post('/Home/DeleteFile',{DeleteArray:JSON.stringify(json)},data => {
-				if(data.Code == 1)
+				if(data.Code == 1){
+					this.ShowTips('文件删除成功');
 					this.ReLoad();
-				else
+				}else
 					this.alert_config = {
 						title: '提示',
 						message: '文件删除失败',
@@ -223,10 +221,10 @@ new vue({
 			for(var i of this.index)
 				Post('/Home/RecoverFile',{VirName:this.dir[i].vir},data => {
 					if(data.Code == 1){
-						this.tips = '恢复文件成功';
+						this.ShowTips('恢复文件成功');
 						this.ReLoad();
 					}else{
-						this.tips = data.Msg;
+						this.ShowTips(data.Msg,'error');
 					}
 				})
 		},
@@ -304,8 +302,15 @@ new vue({
 		CloseAlert(){
 			this.alert_config = '';
 		},
-		CloseTips(){
-			this.tips = '';
+		ShowTips(message,type='normal'){
+    	this.tips_uuid = Math.random();
+    	this.tips_config = {
+    		message,
+    		type
+    	}
+    },
+   	CloseTips(){
+			this.tips_config = '';
 		},
 		Reset(){
 			this.index = [];
@@ -348,7 +353,7 @@ new vue({
 				this.user_info = data.Data;
 				this.LoadDir();
 			}else{
-				this.tips = data.Msg;
+				this.ShowTips(data.Msg,'error');
 			}
 		})
 
