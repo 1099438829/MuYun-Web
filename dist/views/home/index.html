@@ -87,17 +87,17 @@
   				<span>{{ext?'这里没有文件哦':'找不到文件耶~'}}</span>
   			</div>
   		</li>
-  		<a-item v-for='(item,index) in dir' v-bind:item=item v-bind:index=index v-bind:click=FileClick v-bind:menu=ShowMenu></a-item>
+  		<a-item v-for='(item,index) in dir' v-bind:item=item v-bind:index=index v-bind:click=FileClick v-bind:down=Download v-bind:menu=ShowMenu></a-item>
   	</ul>
   </main>
 
 	<a-menu v-bind:list=context_dir v-bind:fixed=fixed_dir></a-menu>
 	<a-menu v-bind:list=context_file v-bind:fixed=fixed_file v-bind:target=menu_target></a-menu>
 
-	<a-tree v-bind:tree=file_tree v-on:complete=SubmitTree v-on:close=ResetTree></a-tree>
+	<a-tree v-bind:type=tree_type v-bind:tree=file_tree v-on:complete=SubmitTree v-on:close=ResetTree></a-tree>
 
-  <a-alert v-bind:config=alert_config v-on:close=CloseAlert></a-alert>
-  <a-tips v-if=tips_config v-bind:uuid=tips_uuid v-bind:config=tips_config v-on:close=CloseTips></a-tips>
+  <a-alert v-if=alert_config v-bind:config=alert_config v-on:close=CloseAlert></a-alert>
+  <a-tips v-if=tips_config v-bind:uuid=tips_uuid v-bind:config=tips_config v-on:close='tips_config=""'></a-tips>
 </div>
 
 <script src=../../contents/js/vue.min.js></script>

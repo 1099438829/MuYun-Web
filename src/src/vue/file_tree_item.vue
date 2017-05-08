@@ -1,11 +1,11 @@
 <template>
-	<li @click.stop=Click>
-		<span :class='{sel:sel==item.VirName}'>{{item.PathName}}</span>
+	<li :class='{root:item.VirName=="/"}' @click.stop=Click>
+		<div class=item :class='{sel:sel==item.VirName}' :style='{"padding-left":count*18+"px"}'>
+			<div class='dir_icon vm'></div>
+			<span class=vm>{{item.PathName}}</span>
+		</div>
 		<ul v-show=open>
-			<li is=tree v-for='child in item.Children' :item=child :sel=sel @select=Select></li>
-			<li v-if=!item.Children.length @click.stop>
-				<span class=nothing>nothing</span>
-			</li>
+			<li is=tree v-for='child in item.Children' :item=child :sel=sel :count='count+1' @select=Select></li>
 		</ul>
 	</li>
 </template>
@@ -13,7 +13,7 @@
 <script>
 	export default {
 		name: 'tree',
-		props: ['item','sel'],
+		props: ['item','sel','count'],
 		data(){
 			return {
 				open: ''
@@ -32,7 +32,9 @@
 </script>
 
 <style scoped>
-	li{font-size:16px;padding-left:10px;}
-	span:not(.nothing){cursor:pointer;}
-	.sel{background:#272822;color:#FFF;}
+	.root>div:not(.sel){background:#F5F7F9;}
+	.item{cursor:pointer;}
+	.dir_icon{display:inline-block;width:18px;height:18px;margin:0 10px;background:url(../image/file/dir.svg) no-repeat;}
+	span{font-size:14px;line-height:32px;}
+	.sel{background:#0078D7;color:#FFF;}
 </style>

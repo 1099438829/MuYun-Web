@@ -4,8 +4,11 @@
 		<div data-type=icon class=item_icon :class='item.ext||"dir"'></div>
  		<span class='ellipsis item_name'>{{item.name}}</span>
  		<div class=item_plus>
- 			<img width=20 height=20 title='下载' @click.stop=down(index) :src="'../../contents/image/download.png'">
- 			<img width=20 height=20 title='分享' :src="'../../contents/image/share.png'">
+ 			<img width=14 height=18 title='删除' v-if=del @click.stop=del(index) :src="'../../contents/image/del.png'">
+ 			<template v-else>
+	 			<img width=20 height=20 title='下载' @click.stop=down(index) :src="'../../contents/image/download.png'">
+	 			<img width=20 height=20 title='分享' :src="'../../contents/image/share.png'">
+ 			</template>
 			<span class=item_size>{{size}}</span>
  			<time class=item_time>{{item.time}}</time>
  		</div>
@@ -15,7 +18,7 @@
 <script>
 	var Byte = require('../module/computed_byte');
 	export default {
-		props: ['item','index','click','down','menu'],
+		props: ['item','index','click','down','menu','del'],
 		computed: {
 			size(){
 				return this.item.ext ? Byte(this.item.size) : '--';

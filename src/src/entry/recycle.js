@@ -85,7 +85,7 @@ new vue({
 					this.SetDir(data.Data);
 					this.Reset();
 				}else{
-					this.ShowTips(data.Msg,'error');
+					this.ShowTips(data.Msg||'请检查网络连接','error');
 				}
 			})
 		},
@@ -117,7 +117,7 @@ new vue({
 				if(data.Code == 1)
 					this.user_info = data.Data;
 				else
-					this.ShowTips(data.Msg,'error');
+					this.ShowTips(data.Msg||'请检查网络连接','error');
 			})
 		},
 		SelAll(){
@@ -224,7 +224,7 @@ new vue({
 						this.ShowTips('恢复文件成功');
 						this.ReLoad();
 					}else{
-						this.ShowTips(data.Msg,'error');
+						this.ShowTips(data.Msg||'请检查网络连接','error');
 					}
 				})
 		},
@@ -309,9 +309,6 @@ new vue({
     		type
     	}
     },
-   	CloseTips(){
-			this.tips_config = '';
-		},
 		Reset(){
 			this.index = [];
 			this.dir.forEach(item => item.sel = '');
@@ -339,6 +336,8 @@ new vue({
 		document.addEventListener('keydown',event => {
 			var key = event.keyCode;
 
+			if(this.alert_config) return;
+
 			if((event.metaKey || event.ctrlKey) && key == 65 && event.target.type != 'text'){
 				event.preventDefault();
 				this.SelAll();
@@ -353,7 +352,7 @@ new vue({
 				this.user_info = data.Data;
 				this.LoadDir();
 			}else{
-				this.ShowTips(data.Msg,'error');
+				this.ShowTips(data.Msg||'请检查网络连接','error');
 			}
 		})
 

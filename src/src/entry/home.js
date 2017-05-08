@@ -102,7 +102,7 @@ new vue({
 					if(!this.trail[0] || LastItem(this.trail).vir != vir) this.trail.push({name:name,vir:vir});
 					this.Reset();
 				}else{
-					this.ShowTips(data.Msg,'error');
+					this.ShowTips(data.Msg||'请检查网络连接','error');
 				}
 			})
 		},
@@ -134,7 +134,7 @@ new vue({
 				if(data.Code == 1)
 					this.user_info = data.Data;
 				else
-					this.ShowTips(data.Msg,'error');
+					this.ShowTips(data.Msg||'请检查网络连接','error');
 			})
 		},
 		GoBack(){
@@ -170,7 +170,7 @@ new vue({
 						this.ext = '';
 						this.SetDir(data.Data);
 					}else{
-						this.ShowTips(data.Msg,'error');
+						this.ShowTips(data.Msg||'请检查网络连接','error');
 					}
 				})
 			else
@@ -226,20 +226,20 @@ new vue({
 				plus: true,
 				value,
 				buttons: [
-					{title: '取消',todo: this.CloseAlert,type: 'button'},
-					{title: '确定',todo: this.NewDirComplete,type: 'submit',color: 'blue'}
+					{title: '取消',todo: this.CloseAlert},
+					{title: '确定',todo: this.NewDirComplete,color: 'blue'}
 				]
 			}
 		},
 		NewDirComplete(name){
 			if(!this.CheckName(name)){
-				this.alert_config = '';
 				Post('/Home/CreateDir',{FileName:name,ParentPath:LastItem(this.trail).vir},data => {
 					if(data.Code == 1){
 						this.ShowTips('创建成功');
 						this.ReLoad();
+						this.alert_config = '';
 					}else{
-						this.ShowTips(data.Msg,'error');
+						this.ShowTips(data.Msg||'请检查网络连接','error');
 					}
 				})
 			}
@@ -253,20 +253,20 @@ new vue({
 				value: this.dir[index].name,
 				index,
 				buttons: [
-					{title: '取消',todo: this.CloseAlert,type: 'button'},
-					{title: '确定',todo: this.ReNameComplete,type: 'submit',color: 'blue'}
+					{title: '取消',todo: this.CloseAlert},
+					{title: '确定',todo: this.ReNameComplete,color: 'blue'}
 				]
 			}
 		},
 		ReNameComplete(name,index){
 			if(!this.CheckName(name,index)){
-				this.alert_config = '';
 				Post('/Home/ReNameFile',{NewFileName:name,VirName:this.dir[index].vir},data => {
 					if(data.Code == 1){
 						this.ShowTips('重命名成功');
 						this.ReLoad();
+						this.alert_config = '';
 					}else{
-						this.ShowTips(data.Msg,'error');
+						this.ShowTips(data.Msg||'请检查网络连接','error');
 					}
 				})
 			}
@@ -289,7 +289,7 @@ new vue({
 				}
 			}
 
-			if(!name.trim()){
+			if(!name){
 				this.ShowTips('不许输入空名哦','error');
 				return true;
 			}
@@ -299,8 +299,8 @@ new vue({
 				title: '删除文件',
 				message: '确定删除所选文件？',
 				buttons: [
-					{title: '取消',todo: this.CloseAlert,type: 'button',},
-					{title: '确定',todo: this.DelFileSure,type: 'submit',color: 'red'}
+					{title: '取消',todo: this.CloseAlert},
+					{title: '确定',todo: this.DelFileSure,color: 'red'}
 				]
 			}
 		},
@@ -315,12 +315,14 @@ new vue({
 				if(data.Code == 1){
 					this.ShowTips('文件删除成功');
 					this.ReLoad();
-				}else
+				}else{
+					this.ShowTips(data.Msg||'请检查网络连接','error');
 					this.alert_config = {
 						title: '提示',
 						message: '文件删除失败',
-						buttons: [{title: '确定',todo: this.CloseAlert,type: 'submit',color: 'red'}]
+						buttons: [{title: '确定',todo: this.CloseAlert,color: 'red'}]
 					}
+				}
 			})
 		},
 		FileClick(index){
@@ -368,13 +370,11 @@ new vue({
 			var item = this.dir[index];
 			if(item.type == 'dir')
 				this.LoadDir(this.ext,item.vir,item.name);
-			// else
-				// this.ShowTips('你点了我咯');
 		},
 		Download(index){
 			index = typeof index == 'object' ? this.index.sort()[0] : index ;
 			if(this.dir[index].type == 'dir')
-				this.ShowTips('暂时不支持整个文件夹下载哦','error');
+				this.ShowTips('暂时不支持整个文件夹下载哦');
 			else
 				Post('/Home/DownLoadFile',{VirName:this.dir[index].vir},data => {
 					if(data.Code == 1){
@@ -383,37 +383,51 @@ new vue({
 						file.href = data.Data;
 						file.click();
 					}else{
-						this.ShowTips(data.Msg,'error');
+						this.ShowTips(data.Msg||'请检查网络连接','error');
 					}
 				})
 		},
 		Upload(list){
-			list = list.target ? [...event.target.files] : list;
+			list = list.target ? [...list.target.files] : list;
+			Log(list);
 			if(list[0]){
 				var check = [];
 				var upload = [];
+				var flag;
 				list.forEach(item => {
-					for(var i=0;this.dir[i];i++)
-						if(item.name == this.dir[i].name){
-							check.push(item);
+					for(var i=0;this.dir_file[i];i++)
+						if(item.name == this.dir_file[i].name){
+							flag = true;
 							break;
-						}else
-							upload.push(item);
+						}
+						
+					flag ? check.push(item) : upload.push(item);
+					flag = '';
 				})
 
-				this.UploadReady(upload);
-				this.UploadCheck(check);
+				Log('check is');
+				Log(check);
+				Log('upload is');
+				Log(upload);
+				check[0] ? this.UploadCheck(check) : this.UploadReady(upload);
 			}
 		},
 		UploadCheck(list){
+			Log('check');
 			var cancel = list => {
 				list.shift();
-				this.UploadCheck(list);
+				if(list[0])
+					this.UploadCheck(list);
+				else
+					this.alert_config = '';
 			}
 
 			var complete = list => {
 				this.UploadReady([list.shift()]);
-				this.UploadCheck(list);
+				if(list[0])
+					this.UploadCheck(list);
+				else
+					this.alert_config = '';
 			}
 
 			this.alert_config = {
@@ -421,14 +435,15 @@ new vue({
 				message: '此文件已存在于当前目录，继续上传将会替换旧文件，是否继续',
 				value: list,
 				buttons: [
-					{title: '否',todo: cancel,type: 'button'},
-					{title: '是',todo: complete,type: 'submit',color: 'red'}
+					{title: '否',todo: cancel},
+					{title: '是',todo: complete,color: 'red'}
 				]
 			}
 		},
 		UploadReady(list){
 			var flag = !this.upload_list[0];
-
+			Log('ready');
+			Log(list);
 			var file_vir = '';
 			for(var v of this.trail)
 				file_vir += v.vir + '/';
@@ -451,33 +466,6 @@ new vue({
 					this.$refs.upload.CheckLoading();
 				},0)
 		},
-		// Upload(event){
-		// 	if(event.target.files[0]){
-		// 		var flag = !this.upload_list[0];
-
-		// 		var file_vir = '';
-		// 		for(var v of this.trail)
-		// 			file_vir += v.vir + '/';
-
-		// 		var list = [...event.target.files].map(item => {
-		// 			return {
-		// 				file: item,
-		// 				file_vir: file_vir.slice(1),
-		// 				path_vir: LastItem(this.trail).vir,
-		// 				type: 'file'
-		// 			}
-		// 		})
-
-		// 		this.upload_list = this.upload_list.concat(list);
-
-		// 		this.upload_show = true;
-
-		// 		if(flag)
-		// 			setTimeout(() => {
-		// 				this.$refs.upload.CheckLoading();
-		// 			},0)
-		// 	}
-		// },
 		CopyTo(index){
 			index = typeof index == 'object' ? this.index.sort()[0] : index;
 			this.move_vir = this.dir[index].vir;
@@ -491,7 +479,7 @@ new vue({
 					this.ReLoad();
 				}
 				else
-					this.ShowTips(data.Msg,'error');
+					this.ShowTips(data.Msg||'请检查网络连接','error');
 			})
 		},
 		MoveTo(index){
@@ -507,7 +495,7 @@ new vue({
 					this.ReLoad();
 				}
 				else
-					this.ShowTips(data.Msg,'error');
+					this.ShowTips(data.Msg||'请检查网络连接','error');
 			})
 		},
 		ShowTree(type){
@@ -517,7 +505,7 @@ new vue({
 				if(data.Code == 1)
 					this.file_tree = [{PathName:'根目录',VirName:'/',Children:data.Data}];
 				else
-					this.ShowTips(data.Msg,'error');
+					this.ShowTips(data.Msg||'请检查网络连接','error');
 			})
 		},
 		SubmitTree(pathVir,selVir){
@@ -555,9 +543,6 @@ new vue({
     		type
     	}
     },
-   	CloseTips(){
-			this.tips_config = '';
-		},
 		Reset(){
 			this.index = [];
 			this.shift_bak = '';
@@ -590,6 +575,8 @@ new vue({
 		document.addEventListener('keydown',event => {
 			var key = event.keyCode;
 
+			if(this.alert_config || this.file_tree) return;
+
 			if((event.metaKey || event.ctrlKey) && key == 65 && event.target.type != 'text'){
 				event.preventDefault();
 				this.SelAll();
@@ -613,7 +600,7 @@ new vue({
 				this.id = data.Data.UserId;
 				this.LoadDir(this.ext,'/','全部文件');
 			}else{
-				this.ShowTips(data.Msg,'error');
+				this.ShowTips(data.Msg||'请检查网络连接','error');
 			}
 		})
 

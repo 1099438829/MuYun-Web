@@ -130,6 +130,22 @@ new vue({
 				this.re_new_pword = '';
 			}
 		},
+		LoadInfo(){
+			Post('/Home/GetUserInfo',null,data => {
+				if(data.Code == 1)
+					this.user_info = data.Data;
+				else
+					this.ShowTips(data.Msg||'请检查网络连接','error');
+			})
+
+			Post('/UserCenter/Index',null,data => {
+				if(data.Code == 1){
+					this.SetInfo(data.Data);
+					this.head_img = data.Data.HeadImg;
+				}else
+					this.ShowTips(data.Msg||'请检查网络连接','error');
+			})
+		},
 		SetInfo(data){
 			function calc(data){
 				if(!data) return '';
@@ -246,7 +262,7 @@ new vue({
 	    			this.ShowTips('成功提交了咯');
 	    			this.isEdit = '';
     			}else
-	    			this.ShowTips(data.Msg,'error');
+	    			this.ShowTips(data.Msg||'请检查网络连接','error');
    			}
    		)
 		},
@@ -313,22 +329,6 @@ new vue({
     },
    	CloseTips(){
 			this.tips_config = '';
-		},
-		LoadInfo(){
-			Post('/Home/GetUserInfo',null,data => {
-				if(data.Code == 1){
-					this.user_info = data.Data;
-					this.head_img = data.Data.HeadImg;
-				}else
-					this.ShowTips(data.Msg,'error');
-			})
-
-			Post('/UserCenter/Index',null,data => {
-				if(data.Code == 1)
-					this.SetInfo(data.Data);
-				else
-					this.ShowTips(data.Msg,'error');
-			})
 		}
 	},
 	components: {

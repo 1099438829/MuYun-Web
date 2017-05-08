@@ -2,12 +2,12 @@
 	<div class='pa upload_window'>
 		<div class='pr upload_delta'></div>
 		<div class='pa upload_content' @click.stop>
-			<div class=u_hd>
+			<header class=u_hd>
 				<a class=u_clear @click.prevent='complete = []'>清除已完成</a>
 				<span class=u_count>
 					{{complete.length}} / {{wait.length + error.length + cancel.length + complete.length + Number(!!loading)}}
 				</span>
-			</div>
+			</header>
 			<div class=u_core>
 				<div class=loading v-show=loading>
 					<div class=loading_top>
